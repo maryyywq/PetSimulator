@@ -4,13 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.res.imageResource
+import com.petsimulator.ui.AnimatedCat
 import com.petsimulator.ui.theme.PetSimulatorTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +16,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PetSimulatorTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                MainScreen()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
+fun MainScreen() {
+    val sprite = ImageBitmap.imageResource(R.drawable.black_cat_laying)
+    AnimatedCat(
+        sprite = sprite,
+        frameCount = 8, //Количество кадров в спрайте
+        targetWidth = 500, //Желаемая ширина кадра
+        targetHeight = 500, //Желаемая высота кадра
+        frameDuration = 200L
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PetSimulatorTheme {
-        Greeting("Android")
-    }
 }

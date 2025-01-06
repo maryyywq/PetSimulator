@@ -44,21 +44,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 )
-
-                //MainScreen()
             }
         }
     }
-}
-
-@Composable
-fun MainScreen() {
-    val sprite = ImageBitmap.imageResource(R.drawable.black_cat_laying)
-    AnimatedCat(
-        sprite = sprite,
-        frameCount = 8, //Количество кадров в спрайте
-        targetWidth = 500, //Желаемая ширина кадра
-        targetHeight = 500, //Желаемая высота кадра
-        frameDuration = 200L
-    )
 }

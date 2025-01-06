@@ -1,22 +1,46 @@
 package com.petsimulator.ui.screens
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.petsimulator.data.UserData
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 
 @Composable
-fun WelcomeScreen(userData: UserData) {
+fun WelcomeScreenWithAnimation(userName: String, onAnimationEnd: () -> Unit) {
+    var isVisible by remember { mutableStateOf(true) }
+
+    //Анимация запускается при появлении экрана
+    LaunchedEffect(Unit) {
+        delay(3000)  //Пауза перед началом исчезновения
+        isVisible = false
+        delay(1000)  //Ждём завершения анимации
+        onAnimationEnd()
+    }
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "Привет, ${userData.userName}! Ваш питомец ${userData.petName} (${userData.petType}) ждет вас!",
-            style = MaterialTheme.typography.displayMedium
-        )
+        AnimatedVisibility(
+            visible = isVisible,
+            enter = fadeIn(animationSpec = tween(1000)),
+            exit = fadeOut(animationSpec = tween(1000))
+        ) {
+            Text(
+                text = "Добро пожаловать, $userName!",
+                fontSize = 32.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(16.dp),
+                lineHeight = 50.sp
+            )
+        }
     }
 }
+

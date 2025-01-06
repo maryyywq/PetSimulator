@@ -7,9 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.petsimulator.data.UserData
+import com.petsimulator.stopSound
 import com.petsimulator.ui.screens.AskUserName
 import com.petsimulator.ui.screens.ChoosePet
-import com.petsimulator.ui.screens.WelcomeScreen
+import com.petsimulator.ui.screens.MainScreen
+import com.petsimulator.ui.screens.WelcomeScreenWithAnimation
 
 @Composable
 fun AppContent(
@@ -18,6 +20,7 @@ fun AppContent(
 ) {
     var currentStep by remember { mutableIntStateOf(0) }
     var userName by remember { mutableStateOf("") }
+    var savedUserData by remember { mutableStateOf<UserData?>(null) }
 
     when (currentStep) {
         0 -> AskUserName { enteredName ->
@@ -26,9 +29,13 @@ fun AppContent(
         }
         1 -> ChoosePet { petType, petName ->
             val newUserData = UserData(userName, petName, petType)
+            stopSound()
             onSaveUserData(newUserData)
             currentStep++
         }
-        else -> WelcomeScreen(userData!!)
+        2 -> WelcomeScreenWithAnimation(savedUserData?.userName ?: "Гость") {
+            currentStep = 3
+        }
+        else -> MainScreen()
     }
 }

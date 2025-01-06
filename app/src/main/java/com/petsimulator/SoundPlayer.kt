@@ -8,10 +8,7 @@ private var mediaPlayer: MediaPlayer? = null
 
 fun playSound(context: Context, soundResId: Int) {
     //Остановить текущий звук, если проигрывается
-    mediaPlayer?.apply {
-        stop()
-        release()
-    }
+    stopSound()
 
     //Создать новый экземпляр и запустить
     mediaPlayer = MediaPlayer.create(context, soundResId).apply {
@@ -20,5 +17,12 @@ fun playSound(context: Context, soundResId: Int) {
             mediaPlayer = null
         }
         start()
+    }
+}
+
+fun stopSound() {
+    mediaPlayer?.apply {
+        stop()
+        release()
     }
 }

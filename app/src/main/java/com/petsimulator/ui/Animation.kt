@@ -51,9 +51,7 @@ fun AnimatedCat(
 
     // Центрирование анимации
     Box(
-        modifier = Modifier
-            .fillMaxSize() // Занимаем всё пространство экрана
-            .background(Color.White), // Белый фон (можно убрать или заменить)
+        modifier = Modifier.size(targetWidth.dp, targetHeight.dp),
         contentAlignment = Alignment.Center // Выравнивание содержимого по центру
     ) {
         // Отрисовка текущего кадра

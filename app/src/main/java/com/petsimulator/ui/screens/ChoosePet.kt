@@ -10,7 +10,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.unit.dp
+import com.petsimulator.R
+import com.petsimulator.ui.GifAnimation
 
 @Composable
 fun ChoosePet(
@@ -26,6 +29,15 @@ fun ChoosePet(
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(modifier = Modifier.height(250.dp)) {
+                when (selectedPet)  {
+                    "Котик" -> GifAnimation(R.drawable.choose_screen_cat)
+                    "Собачка" -> GifAnimation(R.drawable.choose_screen_dog)
+                    "Хомяк" -> GifAnimation(R.drawable.choose_screen_hamster)
+                    else -> GifAnimation(R.drawable.choose_screen_question)
+                }
+            }
+            Spacer(modifier = Modifier.height(25.dp))
             Text(text = "Выберите питомца:", style = MaterialTheme.typography.displaySmall)
             Spacer(modifier = Modifier.height(16.dp))
             petOptions.forEach { pet ->

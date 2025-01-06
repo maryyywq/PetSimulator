@@ -14,6 +14,7 @@ import coil.compose.AsyncImage
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import com.petsimulator.R
+import com.petsimulator.ui.GifAnimation
 
 @Composable
 fun AskUserName(onNameEntered: (String) -> Unit) {
@@ -24,30 +25,21 @@ fun AskUserName(onNameEntered: (String) -> Unit) {
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            val imageRequest = ImageRequest.Builder(LocalContext.current)
-                .data(R.drawable.welcome_cat)
-                .decoderFactory { result, options, _ ->
-                    ImageDecoderDecoder(result.source, options)
-                }
-                .crossfade(true)
-                .build()
-
-            AsyncImage(
-                model = imageRequest,
-                contentDescription = "Загрузка GIF",
-                modifier = Modifier.size(250.dp)
-            )
+            GifAnimation(R.drawable.welcome_cat)
             Text(text = "Введите ваше имя:", style = MaterialTheme.typography.displaySmall)
             Spacer(modifier = Modifier.height(30.dp))
             TextField(
                 value = userName,
                 onValueChange = { userName = it },
-                label = { Text("Ваше имя") }
-
+                label = { Text("Ваше имя") },
+                singleLine = true,
+                placeholder = { Text("Просто ваше имя... и всё...") }
             )
             Spacer(modifier = Modifier.height(30.dp))
             Button(
-                onClick = { if (userName.isNotEmpty()) onNameEntered(userName) }
+                onClick = {
+                    if (userName.isNotEmpty()) onNameEntered(userName)
+                }
             ) {
                 Text("Далее")
             }

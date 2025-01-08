@@ -1,4 +1,4 @@
-package com.petsimulator.data
+package com.petsimulator.database
 
 data class UserData(
     val userName: String,

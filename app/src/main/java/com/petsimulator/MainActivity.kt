@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
-import com.petsimulator.database.UserData
 import com.petsimulator.database.readUserData
 import com.petsimulator.database.saveUserData
 import com.petsimulator.ui.AppContent

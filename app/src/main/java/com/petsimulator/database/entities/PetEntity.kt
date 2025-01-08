@@ -12,5 +12,7 @@ data class PetEntity(
     val energy: Int,
     val health: Int,
     val sex: String,
-    val color: String
+    val color: String,
+    val type: String //Тип питомца: Dog, Cat, Hamster
 )
+

@@ -16,11 +16,14 @@ public abstract class Pet implements Cloneable {
 
     public Pet() { }
 
-    public Pet(String name, int age, Sex sex, Color color) {
+    public Pet(String name, int age, Sex sex, Color color, int satiety, int energy, int health) {
         setName(name);
         setAge(age);
         setSex(sex);
         setColor(color);
+        setEnergy(energy);
+        setHealth(health);
+        setSatiety(satiety);
     }
 
     public abstract String getSound();

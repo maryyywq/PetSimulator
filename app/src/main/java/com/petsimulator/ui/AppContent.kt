@@ -6,8 +6,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.petsimulator.database.UserData
-import com.petsimulator.stopSound
+import com.petsimulator.utils.stopSound
 import com.petsimulator.ui.screens.AskUserName
 import com.petsimulator.ui.screens.ChoosePet
 import com.petsimulator.ui.screens.MainScreen

@@ -10,11 +10,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.petsimulator.R
-import com.petsimulator.playSound
+import com.petsimulator.utils.playSound
 import com.petsimulator.ui.GifAnimation
 
 @Composable

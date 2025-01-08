@@ -1,4 +1,4 @@
-package com.petsimulator
+package com.petsimulator.utils
 
 import android.content.Context
 import android.media.MediaPlayer

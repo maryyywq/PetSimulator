@@ -8,8 +8,6 @@ public abstract class Pet implements Cloneable {
     protected Status status = new Status();
     protected Sex sex ;
     protected Color color;
-    protected SoundBehavior soundBehavior;
-    protected MoveBehavior moveBehavior;
 
     public static final int EnergyCost = 5;
     public static final int healthCost = 5;
@@ -18,28 +16,15 @@ public abstract class Pet implements Cloneable {
 
     public Pet() { }
 
-    public Pet(String name, int age, Sex sex, Color color, SoundBehavior soundBehavior, MoveBehavior moveBehavior) {
+    public Pet(String name, int age, Sex sex, Color color) {
         setName(name);
         setAge(age);
         setSex(sex);
         setColor(color);
-        setSoundBehavior(soundBehavior);
-        setMoveBehavior(moveBehavior);
     }
 
-    public void performSound()  {
-        if (soundBehavior != null)
-            soundBehavior.makeSound();
-        else
-            System.out.println("Ваш питомец не умеет издавать звуков!");
-    }
+    public abstract String getSound();
 
-    public void performMove() {
-        if (moveBehavior != null)
-            moveBehavior.move();
-        else
-            System.out.println("Ваш питомец не умеет двигаться!");
-    }
 
     public String getName() {
         return name;
@@ -69,9 +54,6 @@ public abstract class Pet implements Cloneable {
 
     public Color getColor() { return color; }
 
-    public SoundBehavior getSoundBehavior() {return soundBehavior;}
-
-    public MoveBehavior getMoveBehavior() {return moveBehavior;}
 
     public void setName(String name) {
         if (name == null || name.isEmpty()) {
@@ -127,21 +109,6 @@ public abstract class Pet implements Cloneable {
             throw new IllegalArgumentException("Окраска не может быть пустой.");
         }
         this.color = color;
-    }
-
-    protected void setSoundBehavior(SoundBehavior soundBehavior) {
-        this.soundBehavior = soundBehavior;
-    }
-
-    protected void setMoveBehavior(MoveBehavior moveBehavior) {
-        this.moveBehavior = moveBehavior;
-    }
-
-    void makeSound(){
-        if(soundBehavior == null) {
-            System.out.println("Ваш питомец не умеет издавать звуки!");
-        }
-        else soundBehavior.makeSound();
     }
 
     public void use(PetItem item) {
@@ -207,6 +174,7 @@ public abstract class Pet implements Cloneable {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Имя питомца: " + name + "\n" +

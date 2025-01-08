@@ -1,20 +1,23 @@
 package com.petsimulator.model;
 
+import androidx.annotation.NonNull;
+
 import java.util.*;
 
 public class Owner {
     private String ownerName = "Некто";
     private int ownerAge;
     private int money;
-    private Map<String, Pet> pets = new HashMap<>();
+    private Pet pet = null;
     private List<PetItem> itemInventory = new ArrayList<>();
 
     public Owner() { }
 
-    public Owner(String ownerName, int ownerAge, int money) {
+    public Owner(String ownerName, int ownerAge, int money, Pet pet) {
         setOwnerName(ownerName);
         setOwnerAge(ownerAge);
         setMoney(money);
+        setPet(pet);
     }
 
 
@@ -28,10 +31,6 @@ public class Owner {
 
     public int getMoney() {
         return money;
-    }
-
-    public Map<String, Pet> getPets() {
-        return pets;
     }
 
     public List<PetItem> getInventory() {
@@ -59,20 +58,12 @@ public class Owner {
         this.money = money;
     }
 
-    public void addPet(Pet pet) {
-        pets.put(pet.getName(), pet);
-    }
-
-    public void removePet(String name) {
-        pets.remove(name);
-    }
-
-    public Pet getPet(String name) {
-        Pet pet = pets.get(name);
-        if (pet == null) {
-            System.out.println("Такого питомца у этого хозяина нет!");
-        }
+    public Pet getPet() {
         return pet;
+    }
+
+    public void setPet(Pet pet) {
+        this.pet = pet;
     }
 
     public void addItem(PetItem item) {
@@ -88,7 +79,7 @@ public class Owner {
         if (itemToRemove != null) {
             itemInventory.remove(itemToRemove);
         } else {
-            System.out.println("Такого предмета не существует!");
+            throw new IllegalArgumentException("Такого предмета не существует!");
         }
     }
 
@@ -96,10 +87,7 @@ public class Owner {
         return itemInventory.stream()
                 .filter(item -> item.getName().equals(name))
                 .findFirst()
-                .orElseGet(() -> {
-                    System.out.println("Такого предмета не существует!");
-                    return null;
-                });
+                .orElseThrow(() -> new IllegalArgumentException("Такого предмета не существует!"));
     }
 
     public void sortItemsByValue() {
@@ -110,50 +98,51 @@ public class Owner {
         itemInventory.sort((left, right) -> Integer.compare(right.getCost(), left.getCost()));
     }
 
-    public void pet(Pet pet)
+    public String pet()
     {
         Random r = new Random();
         int randNum = r.nextInt(100) + 1;
         if (randNum <= 60)
         {
             pet.setMood(Mood.HAPPY);
-            System.out.println(pet.getName() + " радуется от того, что вы его (её) погладили!");
+            String sexPronoun = pet.getSex() == Sex.MALE ? "его" : "её";
+            return (pet.getName() + " радуется от того, что вы " + sexPronoun + " погладили!");
         }
         else
         {
             pet.setMood(Mood.ANGRY);
-            System.out.println(pet.getName() + " злится! Он (она) не в настроении!");
+            String sexPronoun = pet.getSex() == Sex.MALE ? "Он" : "Она";
+            return (pet.getName() + " злится! " + sexPronoun + " не в настроении!");
         }
     }
 
-    public void play(Pet pet, Game game)
+    public String play(Game game)
     {
+        String sexVerbEnding = pet.getSex() == Sex.MALE ? "" : "а";
         if (pet.getEnergy() >= game.getEnergyCost()) {
             pet.setMood(Mood.HAPPY);
             pet.setEnergy(pet.getEnergy() - game.getEnergyCost());
             pet.setSatiety(pet.getSatiety() - Pet.satietyCost);
-            System.out.println(game.getDescription());
-            System.out.println(pet.getName() + " поиграл(а) в " + game.getGameName() + " и очень счастлив(а)!");
+
+            return (pet.getName() + " поиграл" + sexVerbEnding + " в " + game.getGameName() + " и очень счастлив" + sexVerbEnding + "!");
         } else {
-            System.out.println(pet.getName() + " слишком устал(а) для игры.");
+            return (pet.getName() + " слишком устал" + sexVerbEnding + " для игры.");
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
-        String result = "Имя владельца: " + getOwnerName() + "\n";
-        result += "Возраст: " + getOwnerAge() + "\n";
-        result += "Количество денег: " + getMoney() + "\n";
-        result += "Питомцы: \n";
-        for (Map.Entry<String, Pet> entry : getPets().entrySet()) {
-            result += "\t" + entry.getKey() + "\n";
-        }
-        result += "Предметы в инвентаре: \n";
+        StringBuilder result = new StringBuilder("Имя владельца: " + getOwnerName() + "\n");
+        result.append("Возраст: ").append(getOwnerAge()).append("\n");
+        result.append("Количество денег: ").append(getMoney()).append("\n");
+        result.append("Питомец: \n");
+        result.append(pet);
+        result.append("Предметы в инвентаре: \n");
         for (PetItem item : getInventory()) {
-            result += "\t" + item.getName() + "\n";
+            result.append("\t").append(item.getName()).append("\n");
         }
-        return result;
+        return result.toString();
     }
-
 }
 

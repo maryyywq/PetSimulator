@@ -111,10 +111,12 @@ public abstract class Pet implements Cloneable {
         this.color = color;
     }
 
-    public void use(PetItem item) {
+    public String use(PetItem item) {
         if (item.getPetUser().equals(this.getClass()) || item.getPetUser().equals(Pet.class))
         {
             String className = item.getClass().getSimpleName();
+            String sexPronoun = sex == Sex.MALE ? "его" : "её";
+            String sexVerbEnding = sex == Sex.MALE ? "" : "а";
             switch (className)
             {
                 case "Food":
@@ -123,39 +125,40 @@ public abstract class Pet implements Cloneable {
                     if (status.getSatiety() == Status.maxSatiety) {
                         status.setMood(Mood.HAPPY);
                     }
-                    System.out.println(name + " покушал(а) " + item.getName() + " и его(ее) голод уменьшился.");
-                    break;
+                    return (name + " покушал" + sexVerbEnding + " " + item.getName() + " и " + sexPronoun + " голод уменьшился.");
                 case "Medicine":
                     status.setHealth(status.getHealth() + item.getValue());
                     if (status.getHealth() > Status.maxHealth) {
                         status.setHealth(Status.maxHealth);
                         status.setMood(Mood.HAPPY);
                     }
-                    System.out.println(name + " принял(а) " + item.getName() + " и его(ее) здоровье улучшилось.");
-                    break;
+                    return (name + " принял" + sexVerbEnding + " " + item.getName() + " и " + sexPronoun + " здоровье улучшилось.");
                 default:
-                    break;
+                    return null;
             }
         }
         else
         {
-            System.out.println(item.getName() + " не подходит для " + getName() + "!");
+            throw new IllegalArgumentException(item.getName() + " не подходит для " + getName() + "!");
         }
     }
 
-    public void walk(Weather weather) {
+    public String walk(Weather weather) {
+        String res;
         if (weather == Weather.STORM || weather == Weather.RAINY || weather == Weather.WINDY) {
             status.setMood(Mood.AFRAID);
             status.setHealth(status.getHealth() - healthCost);
             if (status.getHealth() < 0) status.setHealth(0);
-            System.out.println(name + " испугался(ась) из-за плохой погоды.");
+            String sexVerbEnding = sex == Sex.MALE ? "ся" : "ась";
+            res = (name + " испугал" + sexVerbEnding + " из-за плохой погоды.");
         } else {
             status.setMood(Mood.HAPPY);
-            System.out.println(name + " гуляет и наслаждается хорошей погодой.");
+            res = (name + " гуляет и наслаждается хорошей погодой.");
         }
         status.setEnergy(status.getEnergy() - EnergyCost);
         status.setSatiety(status.getSatiety() - satietyCost);
         if (status.getEnergy() < 0) status.setEnergy(0);
+        return res;
     }
 
     public void sleep(PetHouse house) {
@@ -165,11 +168,13 @@ public abstract class Pet implements Cloneable {
             status.setEnergy(Status.maxEnergy);
         }
 
+        String sexVerbEnding = getSex() == Sex.MALE ? "" : "а";
+
         if (status.getEnergy() >= 50) {
-            System.out.println(name + " хорошо отдохнул(а)!");
+            System.out.println(name + " хорошо отдохнул" + sexVerbEnding + "!");
             status.setMood(Mood.HAPPY);
         } else {
-            System.out.println(name + " не очень хорошо отдохнул(а) :(");
+            System.out.println(name + " не очень хорошо отдохнул" + sexVerbEnding + " :(");
             status.setMood(Mood.SAD);
         }
     }

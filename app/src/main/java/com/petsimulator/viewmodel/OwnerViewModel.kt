@@ -23,7 +23,6 @@ class OwnerViewModel(private val owner: Owner) : ViewModel() {
     private val _inventory = MutableLiveData(owner.inventory)
     val inventory: LiveData<List<PetItem>> get() = _inventory
 
-    // Методы управления владельцем
     fun setOwnerName(name: String) {
         owner.setOwnerName(name)
         _ownerName.value = name

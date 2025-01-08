@@ -19,25 +19,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        var userData by mutableStateOf<UserData?>(null)
-
-        // Чтение данных
-        lifecycleScope.launch {
-            readUserData().collect { data ->
-                userData = data
-            }
-        }
         setContent {
             PetSimulatorTheme {
-                AppContent(
-                    userData = userData,
-                    onSaveUserData = { newUserData ->
-                        lifecycleScope.launch {
-                            saveUserData(newUserData)
-                            userData = newUserData
-                        }
-                    }
-                )
+                AppContent()
             }
         }
     }

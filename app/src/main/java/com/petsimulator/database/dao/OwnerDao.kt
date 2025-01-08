@@ -14,13 +14,10 @@ interface OwnerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOwner(owner: OwnerEntity)
 
-    @Query("SELECT * FROM owners WHERE id = 1")
-    suspend fun getOwner(): OwnerEntity?
-
     @Update
     suspend fun updateOwner(owner: OwnerEntity)
 
     @Transaction
     @Query("SELECT * FROM owners WHERE id = 1")
-    suspend fun getOwnerWithPetAndItems(): OwnerWithPetAndItems?
+    suspend fun getOwner(): OwnerWithPetAndItems?
 }

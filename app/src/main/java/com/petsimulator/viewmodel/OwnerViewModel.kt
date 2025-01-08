@@ -17,8 +17,8 @@ class OwnerViewModel(private val owner: Owner) : ViewModel() {
     private val _money = MutableLiveData(owner.money)
     val money: LiveData<Int> get() = _money
 
-    private val _pets = MutableLiveData(owner.pets)
-    val pets: LiveData<Map<String, Pet>> get() = _pets
+    private val _pet = MutableLiveData(owner.pet)
+    val pet: LiveData<Pet> get() = _pet
 
     private val _inventory = MutableLiveData(owner.inventory)
     val inventory: LiveData<List<PetItem>> get() = _inventory
@@ -38,32 +38,21 @@ class OwnerViewModel(private val owner: Owner) : ViewModel() {
         _money.value = amount
     }
 
-    // Методы для питомцев
-    fun addPet(pet: Pet) {
-        owner.addPet(pet)
-        _pets.value = owner.pets
+    fun getPet(): Pet? {
+        return owner.pet
     }
 
-    fun removePet(name: String) {
-        owner.removePet(name)
-        _pets.value = owner.pets
+    fun petPet() {
+        owner.pet()
+        updatePetState()
     }
 
-    fun getPet(name: String): Pet? {
-        return owner.getPet(name)
+    fun playWithPet(game: Game) {
+        owner.play(game)
+        updatePetState()
     }
 
-    fun petPet(pet: Pet) {
-        owner.pet(pet)
-        updatePetState(pet)
-    }
-
-    fun playWithPet(pet: Pet, game: Game) {
-        owner.play(pet, game)
-        updatePetState(pet)
-    }
-
-    // Методы для инвентаря
+    //Методы для инвентаря
     fun addItem(item: PetItem) {
         owner.addItem(item)
         _inventory.value = owner.inventory
@@ -88,9 +77,9 @@ class OwnerViewModel(private val owner: Owner) : ViewModel() {
         _inventory.value = owner.inventory
     }
 
-    // Вспомогательный метод для обновления состояния питомца
-    private fun updatePetState(pet: Pet) {
-        // Принудительное обновление состояния питомцев
-        _pets.value = owner.pets
+    //Вспомогательный метод для обновления состояния питомца
+    private fun updatePetState() {
+        //Принудительное обновление состояния питомцев
+        _pet.value = owner.pet
     }
 }

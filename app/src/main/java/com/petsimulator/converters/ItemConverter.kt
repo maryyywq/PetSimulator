@@ -1,15 +1,12 @@
 package com.petsimulator.converters
 
-import android.content.ClipData.Item
 import com.petsimulator.database.entities.ItemEntity
 import com.petsimulator.model.Cat
-import com.petsimulator.model.Color
 import com.petsimulator.model.Dog
 import com.petsimulator.model.Food
 import com.petsimulator.model.Hamster
 import com.petsimulator.model.Medicine
 import com.petsimulator.model.PetItem
-import com.petsimulator.model.Sex
 
 fun ItemEntity.toItem(): PetItem {
     val petType = when(pet_type) {

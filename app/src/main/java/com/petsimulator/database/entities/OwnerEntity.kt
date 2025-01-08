@@ -16,7 +16,6 @@ import androidx.room.PrimaryKey
 data class OwnerEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 1,
     val name: String,
-    val age: Int,
     val money: Int,
     val pet_id: Int? //Внешний ключ для связи с питомцем
 )

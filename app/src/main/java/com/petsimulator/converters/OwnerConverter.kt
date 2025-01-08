@@ -6,7 +6,7 @@ import com.petsimulator.model.Owner
 
 fun OwnerWithPetAndItems.toOwner(): Owner {
     val petModel = pet?.toPet()
-    val owner = Owner(owner.name, owner.age, owner.money, petModel)
+    val owner = Owner(owner.name, owner.money, petModel)
     items.forEach {
         owner.addItem(it.toItem())
     }
@@ -16,7 +16,6 @@ fun OwnerWithPetAndItems.toOwner(): Owner {
 fun Owner.toEntity(): OwnerEntity {
     return OwnerEntity(
         name = ownerName,
-        age = ownerAge,
         money = money,
         pet_id = 1
     )

@@ -13,17 +13,16 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
 @Composable
-fun WelcomeScreenWithAnimation(userName: String, onAnimationEnd: () -> Unit) {
+fun WelcomeScreenWithAnimation(userName: String) {
     var isVisible by remember { mutableStateOf(false) }
 
     //Анимация запускается при появлении экрана
     LaunchedEffect(Unit) {
-        delay(500)  // Небольшая задержка перед появлением
+        delay(500)  //Небольшая задержка перед появлением
         isVisible = true
         delay(5000)  //Пауза перед началом исчезновения
         isVisible = false
         delay(1000)  //Ждём завершения анимации
-        onAnimationEnd()
     }
 
     Box(

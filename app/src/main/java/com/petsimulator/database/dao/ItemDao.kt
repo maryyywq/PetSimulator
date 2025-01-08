@@ -13,7 +13,7 @@ interface ItemDao {
     suspend fun insertItem(item: ItemEntity)
 
     @Query("SELECT * FROM items")
-    suspend fun getItems(): List<ItemEntity>
+    suspend fun getItems(): List<ItemEntity?>
 
     @Delete
     suspend fun deleteItem(item: ItemEntity)

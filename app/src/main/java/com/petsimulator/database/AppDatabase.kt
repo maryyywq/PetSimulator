@@ -17,7 +17,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun petDao(): PetDao
     abstract fun itemDao(): ItemDao
 
-    //реализуем синглтон
+    //Реализуем синглтон
     companion object {
         private var INSTANCE: AppDatabase? = null
         fun getInstance(context: Context): AppDatabase {

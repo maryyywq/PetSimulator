@@ -18,7 +18,7 @@ import com.petsimulator.ui.GifAnimation
 
 @Composable
 fun ChoosePet(
-    onPetSelected: (String, String) -> Unit
+    onPetSelected: (String, ) -> Unit
 ) {
     var petName by remember { mutableStateOf("") }
     var selectedPet by remember { mutableStateOf("") }

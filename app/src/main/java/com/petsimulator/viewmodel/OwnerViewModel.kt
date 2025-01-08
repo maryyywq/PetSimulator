@@ -3,83 +3,76 @@ package com.petsimulator.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.petsimulator.model.*
+import androidx.lifecycle.viewModelScope
+import com.petsimulator.converters.toEntity
+import com.petsimulator.converters.toOwner
+import com.petsimulator.database.dao.OwnerDao
+import com.petsimulator.database.dao.PetDao
+import com.petsimulator.model.Game
+import com.petsimulator.model.Owner
+import kotlinx.coroutines.launch
 
-class OwnerViewModel(private val owner: Owner) : ViewModel() {
+class OwnerViewModel(
+    private val ownerDao: OwnerDao,
+) : ViewModel() {
 
-    // Живые данные для наблюдения
-    private val _ownerName = MutableLiveData(owner.ownerName)
-    val ownerName: LiveData<String> get() = _ownerName
+    private val _owner = MutableLiveData<Owner>()
+    val owner: LiveData<Owner> get() = _owner
 
-    private val _ownerAge = MutableLiveData(owner.ownerAge)
-    val ownerAge: LiveData<Int> get() = _ownerAge
+    private val _message = MutableLiveData<String>()
+    val message: LiveData<String> get() = _message
 
-    private val _money = MutableLiveData(owner.money)
-    val money: LiveData<Int> get() = _money
+    init {
+        loadOwnerData()
+    }
 
-    private val _pet = MutableLiveData(owner.pet)
-    val pet: LiveData<Pet> get() = _pet
-
-    private val _inventory = MutableLiveData(owner.inventory)
-    val inventory: LiveData<List<PetItem>> get() = _inventory
+    private fun loadOwnerData() {
+        viewModelScope.launch {
+            val ownerWithPet = ownerDao.getOwner()
+            if (ownerWithPet != null) {
+                val ownerModel = ownerWithPet.toOwner()
+                _owner.postValue(ownerModel)
+            }
+            else {
+                _message.postValue("Владелец не найден в базе данных.")
+            }
+        }
+    }
 
     fun setOwnerName(name: String) {
-        owner.setOwnerName(name)
-        _ownerName.value = name
+        _owner.value?.apply {
+            try {
+                setOwnerName(name)
+                saveOwner()
+            } catch (e: IllegalArgumentException) {
+                _message.value = e.message
+            }
+        }
     }
 
-    fun setOwnerAge(age: Int) {
-        owner.setOwnerAge(age)
-        _ownerAge.value = age
+    fun addMoney(amount: Int) {
+        _owner.value?.apply {
+            setMoney(money + amount)
+            saveOwner()
+        }
     }
 
-    fun setMoney(amount: Int) {
-        owner.setMoney(amount)
-        _money.value = amount
+    fun removeMoney(amount: Int) {
+        _owner.value?.apply {
+            if (money >= amount) {
+                setMoney(money - amount)
+                saveOwner()
+            } else {
+                _message.value = "Недостаточно денег!"
+            }
+        }
     }
 
-    fun getPet(): Pet? {
-        return owner.pet
-    }
-
-    fun petPet() {
-        owner.pet()
-        updatePetState()
-    }
-
-    fun playWithPet(game: Game) {
-        owner.play(game)
-        updatePetState()
-    }
-
-    //Методы для инвентаря
-    fun addItem(item: PetItem) {
-        owner.addItem(item)
-        _inventory.value = owner.inventory
-    }
-
-    fun removeItem(name: String) {
-        owner.removeItem(name)
-        _inventory.value = owner.inventory
-    }
-
-    fun getItem(name: String): PetItem? {
-        return owner.getItem(name)
-    }
-
-    fun sortItemsByValue() {
-        owner.sortItemsByValue()
-        _inventory.value = owner.inventory
-    }
-
-    fun sortItemsByCost() {
-        owner.sortItemsByCost()
-        _inventory.value = owner.inventory
-    }
-
-    //Вспомогательный метод для обновления состояния питомца
-    private fun updatePetState() {
-        //Принудительное обновление состояния питомцев
-        _pet.value = owner.pet
+    private fun saveOwner() {
+        _owner.value?.let { owner ->
+            viewModelScope.launch {
+                ownerDao.updateOwner(owner.toEntity())
+            }
+        }
     }
 }

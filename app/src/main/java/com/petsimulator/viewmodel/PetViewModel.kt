@@ -3,61 +3,103 @@ package com.petsimulator.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.petsimulator.converters.toEntity
+import com.petsimulator.converters.toPet
+import com.petsimulator.database.dao.PetDao
+import com.petsimulator.model.Game
+import com.petsimulator.model.GameDay
 import com.petsimulator.model.Pet
-import com.petsimulator.model.PetItem
 import com.petsimulator.model.PetHouse
-import com.petsimulator.model.Weather
+import com.petsimulator.model.PetItem
+import kotlinx.coroutines.launch
 
-class PetViewModel(private val pet: Pet) : ViewModel() {
+class PetViewModel(
+    private val petDao: PetDao
+) : ViewModel() {
 
-    // Живые данные для наблюдения за состоянием питомца
-    private val _name = MutableLiveData(pet.name)
-    val name: LiveData<String> get() = _name
+    private val _pet = MutableLiveData<Pet>()
+    val pet: LiveData<Pet> get() = _pet
 
-    private val _age = MutableLiveData(pet.age)
-    val age: LiveData<Int> get() = _age
+    private val _message = MutableLiveData<String>()
+    val message: LiveData<String> get() = _message
 
-    private val _satiety = MutableLiveData(pet.satiety)
-    val satiety: LiveData<Int> get() = _satiety
-
-    private val _energy = MutableLiveData(pet.energy)
-    val energy: LiveData<Int> get() = _energy
-
-    private val _health = MutableLiveData(pet.health)
-    val health: LiveData<Int> get() = _health
-
-    private val _mood = MutableLiveData(pet.mood)
-    val mood: LiveData<String> get() = MutableLiveData<String>(_mood.value.toString()) // Преобразование настроения в строку для UI
-
-    // Методы для управления питомцем
-    fun feed(item: PetItem) {
-        pet.use(item)
-        updateState()
+    init {
+        loadPetData()
     }
 
-    fun sleep(house: PetHouse) {
-        pet.sleep(house)
-        updateState()
+    private fun loadPetData() {
+        viewModelScope.launch {
+            val petEntity = petDao.getPet()
+            if (petEntity != null) {
+                val petModel = petEntity.toPet()
+                _pet.postValue(petModel)
+            } else {
+                _message.postValue("Питомец не найден в базе данных.")
+            }
+        }
     }
 
-    fun walk(weather: Weather) {
-        pet.walk(weather)
-        updateState()
+    fun setPetName(name: String) {
+        _pet.value?.apply {
+            try {
+                setName(name)
+                savePet()
+            } catch (e: IllegalArgumentException) {
+                _message.value = e.message
+            }
+        }
     }
 
-    fun performSound() {
-        pet.performSound()
+    fun useItem(item: PetItem) {
+        _pet.value?.apply {
+            try {
+                val res = use(item)
+                savePet()
+                _message.value = res
+            } catch (e: IllegalArgumentException) {
+                _message.value = e.message
+            }
+        }
     }
 
-    fun performMove() {
-        pet.performMove()
+    fun playWithPet(game: Game) {
+        _pet.value?.apply {
+            val res = play(game)
+            savePet()
+            _message.value = res
+        }
     }
 
-    // Метод обновления состояния питомца в ViewModel
-    private fun updateState() {
-        _satiety.value = pet.satiety
-        _energy.value = pet.energy
-        _health.value = pet.health
-        _mood.value = pet.mood
+    fun walkWithPet(gameDay: GameDay) {
+        _pet.value?.apply {
+            val result = walk(gameDay)
+            savePet()
+            _message.value = result
+        }
+    }
+
+    fun sleep(petHouse: PetHouse) {
+        _pet.value?.apply {
+            val result = sleep(petHouse)
+            savePet()
+            _message.value = result
+        }
+    }
+
+    fun pet() {
+        _pet.value?.apply {
+            val result = pet()
+            savePet()
+            _message.value = result
+        }
+    }
+
+    private fun savePet() {
+        _pet.value?.let { pet ->
+            viewModelScope.launch {
+                petDao.updatePet(pet.toEntity())
+            }
+        }
     }
 }

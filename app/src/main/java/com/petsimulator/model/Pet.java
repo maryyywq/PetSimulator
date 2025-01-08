@@ -2,6 +2,8 @@ package com.petsimulator.model;
 
 import androidx.annotation.NonNull;
 
+import java.util.Random;
+
 public abstract class Pet implements Cloneable {
     protected String name = "";
     protected int age;
@@ -146,9 +148,9 @@ public abstract class Pet implements Cloneable {
         }
     }
 
-    public String walk(Weather weather) {
+    public String walk(GameDay gameDay) {
         String res;
-        if (weather == Weather.STORM || weather == Weather.RAINY || weather == Weather.WINDY) {
+        if (gameDay.getWeather() == Weather.STORM || gameDay.getWeather() == Weather.RAINY || gameDay.getWeather() == Weather.WINDY) {
             status.setMood(Mood.AFRAID);
             status.setHealth(status.getHealth() - healthCost);
             if (status.getHealth() < 0) status.setHealth(0);
@@ -164,7 +166,9 @@ public abstract class Pet implements Cloneable {
         return res;
     }
 
-    public void sleep(PetHouse house) {
+    public String sleep(PetHouse house) {
+        String res;
+
         status.setEnergy(status.getEnergy() + house.getComfortLevel());
         status.setSatiety(status.getSatiety() - sleepHungerCost);
         if (status.getEnergy() > Status.maxEnergy) {
@@ -174,11 +178,45 @@ public abstract class Pet implements Cloneable {
         String sexVerbEnding = getSex() == Sex.MALE ? "" : "а";
 
         if (status.getEnergy() >= 50) {
-            System.out.println(name + " хорошо отдохнул" + sexVerbEnding + "!");
+            res = (name + " хорошо отдохнул" + sexVerbEnding + "!");
             status.setMood(Mood.HAPPY);
         } else {
-            System.out.println(name + " не очень хорошо отдохнул" + sexVerbEnding + " :(");
+            res = (name + " не очень хорошо отдохнул" + sexVerbEnding + " :(");
             status.setMood(Mood.SAD);
+        }
+
+        return res;
+    }
+
+    public String pet()
+    {
+        Random r = new Random();
+        int randNum = r.nextInt(100) + 1;
+        if (randNum <= 60)
+        {
+            setMood(Mood.HAPPY);
+            String sexPronoun = getSex() == Sex.MALE ? "его" : "её";
+            return (getName() + " радуется от того, что вы " + sexPronoun + " погладили!");
+        }
+        else
+        {
+            setMood(Mood.ANGRY);
+            String sexPronoun = getSex() == Sex.MALE ? "Он" : "Она";
+            return (getName() + " злится! " + sexPronoun + " не в настроении!");
+        }
+    }
+
+    public String play(Game game)
+    {
+        String sexVerbEnding = getSex() == Sex.MALE ? "" : "а";
+        if (getEnergy() >= game.getEnergyCost()) {
+            setMood(Mood.HAPPY);
+            setEnergy(getEnergy() - game.getEnergyCost());
+            setSatiety(getSatiety() - Pet.satietyCost);
+
+            return (getName() + " поиграл" + sexVerbEnding + " в " + game.getGameName() + " и очень счастлив" + sexVerbEnding + "!");
+        } else {
+            return (getName() + " слишком устал" + sexVerbEnding + " для игры.");
         }
     }
 

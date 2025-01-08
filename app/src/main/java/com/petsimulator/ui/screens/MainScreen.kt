@@ -20,17 +20,17 @@ import com.petsimulator.ui.AnimatedCat
 fun MainScreen() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         val sprite = ImageBitmap.imageResource(R.drawable.black_cat_laying)
-        Box(  // Центрируем анимацию
-            modifier = Modifier.fillMaxSize(),  // Занимаем весь экран
-            contentAlignment = Alignment.Center  // Центрируем содержимое
+        Box(  //Центрируем анимацию
+            modifier = Modifier.fillMaxSize(),  //Занимаем весь экран
+            contentAlignment = Alignment.Center  //Центрируем содержимое
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally  // Центрируем по горизонтали
+                horizontalAlignment = Alignment.CenterHorizontally  //Центрируем по горизонтали
             ) {
                 AnimatedCat(
                     sprite = sprite,
                     frameCount = 8,
-                    targetWidth = 300,  // Ограничиваем размеры анимации
+                    targetWidth = 300,  //Ограничиваем размеры анимации
                     targetHeight = 300,
                     frameDuration = 200L
                 )

@@ -7,7 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.petsimulator.database.entities.OwnerEntity
-import com.petsimulator.database.entities.OwnerWithPetAndItems
+import com.petsimulator.model.Owner
 
 @Dao
 interface OwnerDao {
@@ -19,5 +19,5 @@ interface OwnerDao {
 
     @Transaction
     @Query("SELECT * FROM owners WHERE id = 1")
-    suspend fun getOwner(): OwnerWithPetAndItems?
+    suspend fun getOwner(): OwnerEntity?
 }

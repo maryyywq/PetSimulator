@@ -1,14 +1,14 @@
 package com.petsimulator.converters
 
 import com.petsimulator.database.entities.OwnerEntity
-import com.petsimulator.database.entities.OwnerWithPetAndItems
 import com.petsimulator.model.Owner
+import com.petsimulator.model.Pet
+import com.petsimulator.model.PetItem
 
-fun OwnerWithPetAndItems.toOwner(): Owner {
-    val petModel = pet?.toPet()
-    val owner = Owner(owner.name, owner.money, petModel)
+fun OwnerEntity.toOwner(pet: Pet, items: List<PetItem>): Owner {
+    val owner = Owner(name, money, pet)
     items.forEach {
-        owner.addItem(it.toItem())
+        owner.addItem(it)
     }
     return owner
 }

@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.petsimulator.Constants
 import com.petsimulator.ui.screens.AskUserName
 import com.petsimulator.ui.screens.ChoosePet
 import com.petsimulator.ui.screens.MainScreen
@@ -14,14 +15,24 @@ import com.petsimulator.viewmodel.OwnerViewModel
 
 @Composable
 fun AppContent(ownerViewModel: OwnerViewModel) {
-    var currentStep by remember { mutableIntStateOf(0) }
+    val step : Int = if (ownerViewModel.owner.value == null) {
+        0
+    }
+    else if (ownerViewModel.pet.value == null) {
+        1
+    }
+    else {
+        2
+    }
+    var currentStep by remember { mutableIntStateOf(step) }
 
     when (currentStep) {
         0 -> AskUserName { enteredName ->
             ownerViewModel.setOwnerName(enteredName)
+            ownerViewModel.addMoney(Constants.startMoneyBonus)
             currentStep++
         }
-        1 -> ChoosePet { petType, petName ->
+        1 -> ChoosePet { petType, petName,  ->
             viewModel.
             stopSound()
             currentStep++

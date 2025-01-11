@@ -29,7 +29,13 @@ fun ItemEntity.toItem(): PetItem {
     }
 }
 
-fun PetItem.toEntity(ownerId: Int): ItemEntity {
+fun List<ItemEntity?>.toItems() : List<PetItem> {
+    val items : MutableList<PetItem> = arrayListOf()
+    this.forEach { it?.toItem()?.let { it1 -> items.add(it1) } }
+    return items.toList()
+}
+
+fun PetItem.toEntity(): ItemEntity {
     return ItemEntity(
         name = name,
         type = this::class.simpleName ?: "Неизвестный",

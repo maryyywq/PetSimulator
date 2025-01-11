@@ -106,6 +106,18 @@ class OwnerViewModel(
         }
     }
 
+    fun setPet(pet: Pet) {
+        _owner.value?.apply {
+            try {
+                setPet(pet)
+                _pet.postValue(pet)
+                savePet()
+            } catch (e: IllegalArgumentException) {
+                _message.value = e.message
+            }
+        }
+    }
+
     fun setPetName(name: String) {
         _pet.value?.apply {
             try {

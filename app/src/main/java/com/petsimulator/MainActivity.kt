@@ -37,7 +37,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-class OwnerViewModelFactory(val application: Application) :
+@Suppress("UNCHECKED_CAST")
+class OwnerViewModelFactory(private val application: Application) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return OwnerViewModel(application) as T

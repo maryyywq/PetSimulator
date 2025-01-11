@@ -10,6 +10,7 @@ import com.petsimulator.ui.screens.AskUserName
 import com.petsimulator.ui.screens.ChoosePet
 import com.petsimulator.ui.screens.MainScreen
 import com.petsimulator.ui.screens.WelcomeScreenWithAnimation
+import com.petsimulator.utils.createPet
 import com.petsimulator.utils.stopSound
 import com.petsimulator.viewmodel.OwnerViewModel
 
@@ -32,12 +33,16 @@ fun AppContent(ownerViewModel: OwnerViewModel) {
             ownerViewModel.addMoney(Constants.startMoneyBonus)
             currentStep++
         }
-        1 -> ChoosePet { petType, petName,  ->
-            viewModel.
+        1 -> ChoosePet { petName, petType, petColor, petSex  ->
+            ownerViewModel.setPet(createPet(petType))
+            ownerViewModel.setPetName(petName)
+            ownerViewModel.setPetColor(petColor)
+            ownerViewModel.setPetSex(petSex)
             stopSound()
             currentStep++
         }
-        2 -> WelcomeScreenWithAnimation(savedUserData?.userName ?: "Гость") {
+        2 -> {
+            WelcomeScreenWithAnimation(userName = ownerViewModel.owner.value?.ownerName ?: "Гость")
             currentStep = 3
         }
         else -> MainScreen()

@@ -13,12 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.petsimulator.R
+import com.petsimulator.model.Color
+import com.petsimulator.model.Pet
+import com.petsimulator.model.Sex
 import com.petsimulator.utils.playSound
 import com.petsimulator.ui.GifAnimation
+import kotlin.reflect.KClass
 
 @Composable
 fun ChoosePet(
-    onPetSelected: (String, ) -> Unit
+    onPetSelected: (String, KClass<Pet>, Color, Sex) -> Unit
 ) {
     var petName by remember { mutableStateOf("") }
     var selectedPet by remember { mutableStateOf("") }

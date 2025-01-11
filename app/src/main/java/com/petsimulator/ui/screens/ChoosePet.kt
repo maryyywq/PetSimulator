@@ -5,15 +5,22 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonColors
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.petsimulator.Constants.pinkColor
 import com.petsimulator.R
-import com.petsimulator.model.Color
+import com.petsimulator.model.Cat
+import com.petsimulator.model.Color as PetColor
+import com.petsimulator.model.Dog
+import com.petsimulator.model.Hamster
 import com.petsimulator.model.Pet
 import com.petsimulator.model.Sex
 import com.petsimulator.utils.playSound
@@ -22,18 +29,14 @@ import kotlin.reflect.KClass
 
 @Composable
 fun ChoosePet(
-    onPetSelected: (String, KClass<Pet>, Color, Sex) -> Unit
+    onPetSelected: (String, KClass<Pet>, PetColor, Sex) -> Unit
 ) {
-    var petName by remember { mutableStateOf("") }
-    var selectedPet by remember { mutableStateOf("") }
+    var selectedPetName by remember { mutableStateOf("") }
+    var selectedPetType by remember { mutableStateOf<KClass<out Pet>?>(null) }
+    var selectedPetColor by remember { mutableStateOf<PetColor?>(null) }
+    var selectedPetSex by remember { mutableStateOf<Sex?>(null) }
 
     val context = LocalContext.current
-
-    val petOptions = listOf(
-        "Котик" to R.raw.cat_choose_sound,
-        "Собачка" to R.raw.dog_choose_sound,
-        "Хомяк" to R.raw.hamster_choose_sound
-    )
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -41,52 +44,109 @@ fun ChoosePet(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box(modifier = Modifier.height(250.dp)) {
-                when (selectedPet)  {
-                    "Котик" -> GifAnimation(R.drawable.choose_screen_cat)
-                    "Собачка" -> GifAnimation(R.drawable.choose_screen_dog)
-                    "Хомяк" -> GifAnimation(R.drawable.choose_screen_hamster)
+                when (selectedPetType)  {
+                    Cat::class -> GifAnimation(R.drawable.choose_screen_cat)
+                    Dog::class -> GifAnimation(R.drawable.choose_screen_dog)
+                    Hamster::class -> GifAnimation(R.drawable.choose_screen_hamster)
                     else -> GifAnimation(R.drawable.choose_screen_question, size = 200.dp)
                 }
             }
+
+            val petOptions = listOf(
+                Triple("Котик", Cat::class, R.raw.cat_choose_sound),
+                Triple("Собачка", Dog::class, R.raw.dog_choose_sound),
+                Triple("Хомяк", Hamster::class, R.raw.hamster_choose_sound)
+            )
+
             Spacer(modifier = Modifier.height(50.dp))
             Text(text = "Выберите питомца:", style = MaterialTheme.typography.displaySmall)
             Spacer(modifier = Modifier.height(16.dp))
 
-            petOptions.forEach { (pet, soundRes) ->
+            petOptions.forEach { (petClassName, petClass, soundRes) ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .selectable(
-                            selected = (selectedPet == pet),
+                            selected = (selectedPetType == petClass),
                             onClick = {
-                                selectedPet = pet
+                                selectedPetType = petClass as KClass<Pet>
                                 playSound(context, soundRes)
                             }
                         ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = (selectedPet == pet),
+                        selected = (selectedPetType == petClass),
                         onClick = {
-                            selectedPet = pet
+                            selectedPetType = petClass as KClass<Pet>
                             playSound(context, soundRes)
                         }
                     )
-                    Text(text = pet)
+                    Text(text = petClassName)
                 }
             }
 
-
             Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "Выберите пол питомца:", style = MaterialTheme.typography.displaySmall)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            val sexOptions = listOf(
+                Triple("Мужской", Sex.MALE, Color.Blue to Color.LightGray),
+                Triple("Женский", Sex.FEMALE, pinkColor to Color.LightGray)
+            )
+
+            sexOptions.forEach { (petSexName, petSex, petColor) ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            selected = (selectedPetSex == petSex),
+                            onClick = {
+                                selectedPetSex = petSex
+                            }
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = (selectedPetSex == petSex),
+                        onClick = {
+                            selectedPetSex = petSex
+                        },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = petColor.first,
+                            unselectedColor = petColor.second
+                        )
+                    )
+                    Text(text = petSexName)
+                }
+            }
+
+            //Потом здесь написать логику
+            selectedPetColor = PetColor.getRandomColor()
+
             TextField(
-                value = petName,
-                onValueChange = { petName = it },
+                value = selectedPetName,
+                onValueChange = { selectedPetName = it },
                 label = { Text("Имя питомца") },
                 placeholder = { Text("Просто имя вашего любимца...") }
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { if (selectedPet.isNotEmpty() && petName.isNotEmpty()) onPetSelected(selectedPet, petName) }
+                onClick = {
+                    if (
+                        selectedPetType != null &&
+                        selectedPetName.isEmpty() &&
+                        selectedPetSex != null &&
+                        selectedPetColor != null
+                        ) {
+                            onPetSelected(
+                                selectedPetName,
+                                selectedPetType as KClass<Pet>,
+                                selectedPetColor!!,
+                                selectedPetSex!!
+                            )
+                        }
+                }
             ) {
                 Text("Сохранить")
             }

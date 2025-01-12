@@ -22,15 +22,21 @@ import com.petsimulator.model.Pet
 import com.petsimulator.model.PetHouse
 import com.petsimulator.model.PetItem
 import com.petsimulator.model.Sex
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class OwnerViewModel(
     application: Application
 ) : ViewModel() {
 
-    private val ownerDao: OwnerDao = AppDatabase.getInstance(application).ownerDao()
-    private val petDao: PetDao = AppDatabase.getInstance(application).petDao()
-    private val itemDao: ItemDao = AppDatabase.getInstance(application).itemDao()
+    private val database = AppDatabase.getInstance(application)
+    private val ownerDao: OwnerDao = database.ownerDao()
+    private val petDao: PetDao = database.petDao()
+    private val itemDao: ItemDao = database.itemDao()
+
+    private val _isDataLoaded = MutableLiveData<Boolean>()
+    val isDataLoaded: LiveData<Boolean> get() = _isDataLoaded
 
     private val _owner = MutableLiveData<Owner>()
     val owner: LiveData<Owner> get() = _owner
@@ -48,8 +54,8 @@ class OwnerViewModel(
         loadOwnerData()
     }
 
-    private fun loadOwnerData() {
-        viewModelScope.launch {
+    fun loadOwnerData() {
+        viewModelScope.launch(Dispatchers.IO) {
             val owner = ownerDao.getOwner()
             val pet = petDao.getPet()
             val items = itemDao.getItems()
@@ -66,6 +72,14 @@ class OwnerViewModel(
             else {
                 _message.postValue("Информация не найдена.")
             }
+            _isDataLoaded.postValue(true) //Уведомляем, что данные загружены
+        }
+    }
+
+    fun setOwner(owner: Owner) {
+        _owner.value = owner
+        viewModelScope.launch(Dispatchers.IO) {
+            ownerDao.insertOwner(owner.toEntity())
         }
     }
 
@@ -100,7 +114,7 @@ class OwnerViewModel(
 
     private fun saveOwner() {
         _owner.value?.let { owner ->
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 ownerDao.updateOwner(owner.toEntity())
             }
         }
@@ -110,8 +124,10 @@ class OwnerViewModel(
         _owner.value?.apply {
             try {
                 setPet(pet)
-                _pet.postValue(pet)
-                savePet()
+                _pet.value = pet
+                viewModelScope.launch(Dispatchers.IO) {
+                    petDao.insertPet(pet.toEntity())
+                }
             } catch (e: IllegalArgumentException) {
                 _message.value = e.message
             }
@@ -176,13 +192,13 @@ class OwnerViewModel(
     }
 
     private fun addItemDB(item: PetItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             itemDao.insertItem(item.toEntity())
         }
     }
 
     private fun deleteItemDB(item: PetItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             itemDao.deleteItem(item.toEntity())
         }
     }
@@ -238,7 +254,7 @@ class OwnerViewModel(
 
     private fun savePet() {
         _pet.value?.let { pet ->
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 petDao.updatePet(pet.toEntity())
             }
         }

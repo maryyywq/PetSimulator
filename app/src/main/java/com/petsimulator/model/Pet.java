@@ -8,8 +8,8 @@ public abstract class Pet implements Cloneable {
     protected String name = "";
     protected int age;
     protected Status status = new Status();
-    protected Sex sex ;
-    protected Color color;
+    protected Sex sex = Sex.getRandomSex();
+    protected Color color = Color.getRandomColor();
 
     public static final int EnergyCost = 5;
     public static final int healthCost = 5;

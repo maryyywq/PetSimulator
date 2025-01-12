@@ -27,7 +27,7 @@ abstract class AppDatabase : RoomDatabase() {
                 if (instance == null) {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
-                        AppDatabase ::class.java,
+                        AppDatabase::class.java,
                         "pet_simulator.db"
                     ).fallbackToDestructiveMigration().build()
                     INSTANCE = instance

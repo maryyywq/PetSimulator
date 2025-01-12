@@ -9,11 +9,11 @@ import com.petsimulator.model.Medicine
 import com.petsimulator.model.PetItem
 
 fun ItemEntity.toItem(): PetItem {
-    val petType = when(pet_type) {
+    val petType = when(pettype) {
         "Cat" -> Cat::class
         "Dog" -> Dog::class
         "Hamster" -> Hamster::class
-        else -> throw IllegalArgumentException("Неизвестный питомец: $pet_type\"")
+        else -> throw IllegalArgumentException("Неизвестный питомец: $pettype\"")
     }
 
     return when (type) {
@@ -39,9 +39,8 @@ fun PetItem.toEntity(): ItemEntity {
     return ItemEntity(
         name = name,
         type = this::class.simpleName ?: "Неизвестный",
-        pet_type = petUser.simpleName ?: "Неизвестный",
+        pettype = petUser.simpleName ?: "Неизвестный",
         value = value,
         cost = cost,
-        owner_id = 1
         )
 }

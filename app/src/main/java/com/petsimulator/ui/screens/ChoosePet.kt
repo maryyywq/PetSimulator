@@ -120,6 +120,7 @@ fun ChoosePet(
                     Text(text = petSexName)
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
 
             //Потом здесь написать логику
             selectedPetColor = PetColor.getRandomColor()
@@ -135,7 +136,7 @@ fun ChoosePet(
                 onClick = {
                     if (
                         selectedPetType != null &&
-                        selectedPetName.isEmpty() &&
+                        selectedPetName.isNotEmpty() &&
                         selectedPetSex != null &&
                         selectedPetColor != null
                         ) {

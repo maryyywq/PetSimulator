@@ -6,19 +6,12 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "items",
-    foreignKeys = [ForeignKey(
-        entity = OwnerEntity::class,
-        parentColumns = ["id"],
-        childColumns = ["owner_id"],
-        onDelete = ForeignKey.CASCADE
-    )]
 )
 data class ItemEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Int = 1,
     val name: String,
     val type: String,
-    val pet_type: String,
+    val pettype: String,
     val value: Int,
-    val cost: Int,
-    val owner_id: Int //Внешний ключ для связи с владельцем
+    val cost: Int
 )

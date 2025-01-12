@@ -17,7 +17,6 @@ fun Owner.toEntity(): OwnerEntity {
     return OwnerEntity(
         name = ownerName,
         money = money,
-        pet_id = 1
     )
 }
 

@@ -21,8 +21,11 @@ fun playSound(context: Context, soundResId: Int) {
 }
 
 fun stopSound() {
-    mediaPlayer?.apply {
-        stop()
-        release()
+    mediaPlayer?.let {
+        if (it.isPlaying) {
+            it.stop()
+        }
+        it.release()
+        mediaPlayer = null
     }
 }

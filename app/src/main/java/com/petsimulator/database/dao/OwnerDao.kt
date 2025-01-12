@@ -17,7 +17,6 @@ interface OwnerDao {
     @Update
     suspend fun updateOwner(owner: OwnerEntity)
 
-    @Transaction
     @Query("SELECT * FROM owners WHERE id = 1")
     suspend fun getOwner(): OwnerEntity?
 }

@@ -10,20 +10,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.petsimulator.model.Color
+import com.petsimulator.model.Pet
+import com.petsimulator.model.Sex
 import kotlinx.coroutines.delay
+import kotlin.reflect.KClass
 
 @Composable
-fun WelcomeScreenWithAnimation(userName: String, onAnimationEnd: () -> Unit) {
+fun WelcomeScreenWithAnimation(userName: String, onAnimationEnded: () -> Unit) {
     var isVisible by remember { mutableStateOf(false) }
 
     //Анимация запускается при появлении экрана
     LaunchedEffect(Unit) {
-        delay(500)  // Небольшая задержка перед появлением
+        delay(500)  //Небольшая задержка перед появлением
         isVisible = true
         delay(5000)  //Пауза перед началом исчезновения
         isVisible = false
         delay(1000)  //Ждём завершения анимации
-        onAnimationEnd()
+        onAnimationEnded()
     }
 
     Box(

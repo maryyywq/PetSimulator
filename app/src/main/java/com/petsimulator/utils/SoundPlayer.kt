@@ -1,4 +1,4 @@
-package com.petsimulator
+package com.petsimulator.utils
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -21,8 +21,11 @@ fun playSound(context: Context, soundResId: Int) {
 }
 
 fun stopSound() {
-    mediaPlayer?.apply {
-        stop()
-        release()
+    mediaPlayer?.let {
+        if (it.isPlaying) {
+            it.stop()
+        }
+        it.release()
+        mediaPlayer = null
     }
 }

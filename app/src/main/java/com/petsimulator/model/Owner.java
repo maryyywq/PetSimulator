@@ -6,16 +6,14 @@ import java.util.*;
 
 public class Owner {
     private String ownerName = "Некто";
-    private int ownerAge;
     private int money;
     private Pet pet = null;
     private List<PetItem> itemInventory = new ArrayList<>();
 
     public Owner() { }
 
-    public Owner(String ownerName, int ownerAge, int money, Pet pet) {
+    public Owner(String ownerName, int money, Pet pet) {
         setOwnerName(ownerName);
-        setOwnerAge(ownerAge);
         setMoney(money);
         setPet(pet);
     }
@@ -23,10 +21,6 @@ public class Owner {
 
     public String getOwnerName() {
         return ownerName;
-    }
-
-    public int getOwnerAge() {
-        return ownerAge;
     }
 
     public int getMoney() {
@@ -42,13 +36,6 @@ public class Owner {
             throw new IllegalArgumentException("Имя владельца не может быть пустым.");
         }
         this.ownerName = ownerName;
-    }
-
-    public void setOwnerAge(int ownerAge) {
-        if (ownerAge <= 0) {
-            throw new IllegalArgumentException("Возраст владельца должен быть положительным числом.");
-        }
-        this.ownerAge = ownerAge;
     }
 
     public void setMoney(int money) {
@@ -98,43 +85,10 @@ public class Owner {
         itemInventory.sort((left, right) -> Integer.compare(right.getCost(), left.getCost()));
     }
 
-    public String pet()
-    {
-        Random r = new Random();
-        int randNum = r.nextInt(100) + 1;
-        if (randNum <= 60)
-        {
-            pet.setMood(Mood.HAPPY);
-            String sexPronoun = pet.getSex() == Sex.MALE ? "его" : "её";
-            return (pet.getName() + " радуется от того, что вы " + sexPronoun + " погладили!");
-        }
-        else
-        {
-            pet.setMood(Mood.ANGRY);
-            String sexPronoun = pet.getSex() == Sex.MALE ? "Он" : "Она";
-            return (pet.getName() + " злится! " + sexPronoun + " не в настроении!");
-        }
-    }
-
-    public String play(Game game)
-    {
-        String sexVerbEnding = pet.getSex() == Sex.MALE ? "" : "а";
-        if (pet.getEnergy() >= game.getEnergyCost()) {
-            pet.setMood(Mood.HAPPY);
-            pet.setEnergy(pet.getEnergy() - game.getEnergyCost());
-            pet.setSatiety(pet.getSatiety() - Pet.satietyCost);
-
-            return (pet.getName() + " поиграл" + sexVerbEnding + " в " + game.getGameName() + " и очень счастлив" + sexVerbEnding + "!");
-        } else {
-            return (pet.getName() + " слишком устал" + sexVerbEnding + " для игры.");
-        }
-    }
-
     @NonNull
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("Имя владельца: " + getOwnerName() + "\n");
-        result.append("Возраст: ").append(getOwnerAge()).append("\n");
         result.append("Количество денег: ").append(getMoney()).append("\n");
         result.append("Питомец: \n");
         result.append(pet);

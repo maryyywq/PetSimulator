@@ -168,7 +168,7 @@ fun ChoosePet(
                             unselectedColor = Color.LightGray
                         )
                     )
-                    if (textColor == Color.Unspecified)
+                    if (textColor == Color.Unspecified && selectedPetColor == PetColor.MULTI)
                         GradientText(text = petColor.maleName)
                     else
                         Text(text = petColor.maleName)

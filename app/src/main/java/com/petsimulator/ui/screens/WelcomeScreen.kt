@@ -1,32 +1,46 @@
 package com.petsimulator.ui.screens
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.petsimulator.model.Color
-import com.petsimulator.model.Pet
-import com.petsimulator.model.Sex
 import kotlinx.coroutines.delay
-import kotlin.reflect.KClass
 
 @Composable
-fun WelcomeScreenWithAnimation(userName: String, onAnimationEnded: () -> Unit) {
-    var isVisible by remember { mutableStateOf(false) }
+fun WelcomeScreenWithAnimation(
+    userName: String,
+    petName: String,
+    onAnimationEnded: () -> Unit
+) {
+    var isFirstTextVisible by remember { mutableStateOf(false) }
+    var isSecondTextVisible by remember { mutableStateOf(false) }
 
-    //Анимация запускается при появлении экрана
+    // Анимация текста
     LaunchedEffect(Unit) {
-        delay(500)  //Небольшая задержка перед появлением
-        isVisible = true
-        delay(5000)  //Пауза перед началом исчезновения
-        isVisible = false
-        delay(1000)  //Ждём завершения анимации
+        delay(500)  // Небольшая задержка перед появлением первого текста
+        isFirstTextVisible = true
+        delay(4000)  // Пауза перед исчезновением первого текста
+        isFirstTextVisible = false
+        delay(1500)  // Небольшая пауза перед появлением второго текста
+        isSecondTextVisible = true
+        delay(4000)  // Пауза перед завершением анимации
+        isSecondTextVisible = false
+        delay(1000)  // Пауза перед завершением
         onAnimationEnded()
     }
 
@@ -34,8 +48,9 @@ fun WelcomeScreenWithAnimation(userName: String, onAnimationEnded: () -> Unit) {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        //Первый текст
         AnimatedVisibility(
-            visible = isVisible,
+            visible = isFirstTextVisible,
             enter = fadeIn(animationSpec = tween(1000)),
             exit = fadeOut(animationSpec = tween(1000))
         ) {
@@ -47,6 +62,20 @@ fun WelcomeScreenWithAnimation(userName: String, onAnimationEnded: () -> Unit) {
                 lineHeight = 50.sp
             )
         }
+
+        //Второй текст
+        AnimatedVisibility(
+            visible = isSecondTextVisible,
+            enter = fadeIn(animationSpec = tween(1000)),
+            exit = fadeOut(animationSpec = tween(1000))
+        ) {
+            Text(
+                text = "Ваш $petName ждет вас!",
+                fontSize = 32.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(16.dp),
+                lineHeight = 50.sp
+            )
+        }
     }
 }
-

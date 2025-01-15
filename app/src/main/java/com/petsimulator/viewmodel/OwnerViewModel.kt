@@ -54,7 +54,7 @@ class OwnerViewModel(
         loadOwnerData()
     }
 
-    fun loadOwnerData() {
+    private fun loadOwnerData() {
         viewModelScope.launch(Dispatchers.IO) {
             val owner = ownerDao.getOwner()
             val pet = petDao.getPet()

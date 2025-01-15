@@ -57,7 +57,10 @@ fun AppContent(ownerViewModel: OwnerViewModel) {
             stopSound()
             currentStep = 2
         }
-        2 -> WelcomeScreenWithAnimation(userName = ownerViewModel.owner.value?.ownerName ?: "Гость") {
+        2 -> WelcomeScreenWithAnimation(
+            userName = ownerViewModel.owner.value?.ownerName ?: "Гость",
+            petName = ownerViewModel.pet.value?.name ?: "Неизвестный"
+        ) {
             currentStep = 3
         }
         else -> MainScreen()

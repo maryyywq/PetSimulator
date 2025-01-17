@@ -12,7 +12,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.petsimulator.ui.AppContent
 import com.petsimulator.ui.theme.PetSimulatorTheme
-import com.petsimulator.viewmodel.OwnerViewModel
+import com.petsimulator.viewmodel.AppViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
                 val owner = LocalViewModelStoreOwner.current
 
                 owner?.let {
-                    val viewModel: OwnerViewModel = viewModel(
+                    val viewModel: AppViewModel = viewModel(
                         it,
                         "OwnerViewModel",
                         OwnerViewModelFactory(LocalContext.current.applicationContext as Application)
@@ -40,6 +40,6 @@ class MainActivity : ComponentActivity() {
 class OwnerViewModelFactory(private val application: Application) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return OwnerViewModel(application) as T
+        return AppViewModel(application) as T
     }
 }

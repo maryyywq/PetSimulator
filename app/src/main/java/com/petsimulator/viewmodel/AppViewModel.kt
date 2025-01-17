@@ -1,7 +1,6 @@
 package com.petsimulator.viewmodel
 
 import android.app.Application
-import android.net.ipsec.ike.exceptions.InvalidMajorVersionException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,11 +21,10 @@ import com.petsimulator.model.Pet
 import com.petsimulator.model.PetHouse
 import com.petsimulator.model.PetItem
 import com.petsimulator.model.Sex
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class OwnerViewModel(
+class AppViewModel(
     application: Application
 ) : ViewModel() {
 
@@ -220,7 +218,7 @@ class OwnerViewModel(
         }
     }
 
-    fun playWithPet(game: Game) {
+    fun playWithPet(game: Game?) {
         _pet.value?.apply {
             val res = play(game)
             savePet()

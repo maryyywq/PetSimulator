@@ -1,6 +1,5 @@
-package com.petsimulator.ui
+package com.petsimulator.utils
 
-import android.content.ClipDescription
 import android.content.Context
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -11,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
-import com.petsimulator.R
 
 @Composable
 fun GifAnimation(content: Any?, context: Context = LocalContext.current, description: String? = "Загрузка GIF", size: Dp = 250.dp) {

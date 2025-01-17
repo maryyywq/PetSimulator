@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,17 +23,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.petsimulator.R
-import com.petsimulator.ui.GifAnimation
+import com.petsimulator.model.Sex
+import com.petsimulator.ui.theme.getAppTheme
+import com.petsimulator.utils.GifAnimation
+import com.petsimulator.utils.isNight
 import kotlinx.coroutines.delay
 
 @Composable
 fun WelcomeScreenWithAnimation(
     userName: String,
     petName: String,
+    sex: Sex,
     onAnimationEnded: () -> Unit
 ) {
     var isFirstTextVisible by remember { mutableStateOf(false) }
     var isSecondTextVisible by remember { mutableStateOf(false) }
+
+    val theme = getAppTheme(isNight = isNight())
 
     // Анимация текста
     LaunchedEffect(Unit) {
@@ -51,7 +56,9 @@ fun WelcomeScreenWithAnimation(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(theme.backgroundColor),
         contentAlignment = Alignment.Center
     ) {
         //Первый текст
@@ -65,7 +72,8 @@ fun WelcomeScreenWithAnimation(
                 fontSize = 32.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(16.dp),
-                lineHeight = 50.sp
+                lineHeight = 50.sp,
+                color = theme.textColor
             )
         }
 
@@ -82,12 +90,15 @@ fun WelcomeScreenWithAnimation(
             ) {
                 GifAnimation(R.drawable.welcome_cats, size = 300.dp)
 
+                val sexVerbEnding = if (sex == Sex.MALE) "" else "а"
+
                 Text(
-                    text = "Ваш $petName ждет вас!",
+                    text = "Ваш$sexVerbEnding $petName ждет вас!",
                     fontSize = 32.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(16.dp),
-                    lineHeight = 50.sp
+                    lineHeight = 50.sp,
+                    color = theme.textColor
                 )
             }
         }

@@ -3,6 +3,7 @@ package com.petsimulator.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,10 +19,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -39,15 +40,35 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import com.petsimulator.R
 import com.petsimulator.model.Mood
+import com.petsimulator.ui.theme.getAppTheme
+import com.petsimulator.utils.isNight
 import com.petsimulator.viewmodel.AppViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigateToInventory: () -> Unit) {
     val owner = viewModel.owner.value
     val pet = viewModel.pet.value
 
+    var showMenu by remember { mutableStateOf(false) }
+
+    //Определяем состояние времени дня
+    var isNightTime by remember { mutableStateOf(isNight()) }
+
+    //Обновляем время дня каждые 60 секунд
+    LaunchedEffect(Unit) {
+        while (true) {
+            isNightTime = isNight()
+            delay(60000L)
+        }
+    }
+
+    val theme = getAppTheme(isNightTime)
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(theme.backgroundColor),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Spacer(modifier = Modifier.height(25.dp))
@@ -57,20 +78,23 @@ fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigate
             health = pet?.health ?: 0,
             energy = pet?.energy ?: 0,
             mood = pet?.mood ?: Mood.HAPPY,
-            money = owner?.money ?: 0
+            money = owner?.money ?: 0,
+            topBarColor = theme.topBarColor,
+            textColor = theme.textColor
         )
 
-        //Центр: изображение питомца
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .weight(1f),
+                .weight(1f)
+                .pointerInput(Unit) {
+                    detectTapGestures { showMenu = false }
+                },
             contentAlignment = Alignment.Center,
         ) {
-            // Фон
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(R.drawable.background) // Замените на ваш ресурс
+                    .data(if(isNightTime) R.drawable.night_background else R.drawable.day_background) // Замените на ваш ресурс
                     .decoderFactory { result, options, _ ->
                         ImageDecoderDecoder(result.source, options)
                     }
@@ -79,9 +103,6 @@ fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigate
                 contentScale = ContentScale.Crop, //Указывает, что изображение должно растягиваться и обрезаться для заполнения области
                 modifier = Modifier.fillMaxSize() //Растягивает фон на весь экран
             )
-
-            // Питомец
-            var showMenu by remember { mutableStateOf(false) }
 
             Image(
                 painter = painterResource(id = R.drawable.black_cat_laying),
@@ -94,22 +115,23 @@ fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigate
             if (showMenu) {
                 Box(
                     modifier = Modifier
-                        .background(Color.White, shape = CircleShape)
-                        .padding(16.dp),
+                        .background(color = Color.Transparent),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        TextButton(onClick = {
-                            //coroutineScope.launch { viewModel.playWithPet() }
-                            showMenu = false
-                        }) {
-                            Text("Поиграть с питомцем")
+                        Button(
+                            colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
+                            onClick = {
+                                showMenu = false
+                            }) {
+                            Text("Поиграть с питомцем", color = theme.textColor)
                         }
-                        TextButton(onClick = {
-                            //coroutineScope.launch { viewModel.walkWithPet() }
-                            showMenu = false
-                        }) {
-                            Text("Пойти гулять с питомцем")
+                        Button(
+                            colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
+                            onClick = {
+                                showMenu = false
+                            }) {
+                            Text("Погулять с питомцем", color = theme.textColor)
                         }
                     }
                 }
@@ -119,17 +141,20 @@ fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigate
         // Нижняя панель
         BottomNavigationBar(
             onShopClick = onNavigateToShop,
-            onInventoryClick = onNavigateToInventory
+            onInventoryClick = onNavigateToInventory,
+            bottomBarColor = theme.bottomBarColor,
+            buttonBackgroundColor = theme.buttonBackgroundColor,
+            textColor = theme.textColor
         )
     }
 }
 
 @Composable
-fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int) {
+fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int, topBarColor: Color, textColor: Color) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f))
+            .background(topBarColor)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -139,7 +164,7 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Здоровье", fontSize = 16.sp, color = Color.Black)
+            Text("Здоровье", fontSize = 16.sp, color = textColor)
             LinearProgressIndicator(
                 progress = { health / 100f },
                 modifier = Modifier
@@ -157,7 +182,7 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Энергия", fontSize = 16.sp, color = Color.Black)
+            Text("Энергия", fontSize = 16.sp, color = textColor)
             LinearProgressIndicator(
                 progress = { energy / 100f },
                 modifier = Modifier
@@ -175,15 +200,16 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Настроение", fontSize = 16.sp, color = Color.Black)
+            Text("Настроение", fontSize = 16.sp, color = textColor)
             Text(
                 text = when (mood) {
-                    Mood.HAPPY -> "😊"   //Радость
-                    Mood.ANGRY -> "😠"   //Злость
-                    Mood.AFRAID -> "😨"  //Испуг
-                    else -> "😢"         //Грусть
+                    Mood.HAPPY -> "😊"
+                    Mood.ANGRY -> "😠"
+                    Mood.AFRAID -> "😨"
+                    else -> "😢"
                 },
-                fontSize = 24.sp
+                fontSize = 24.sp,
+                color = textColor
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -197,24 +223,24 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int) {
             Icon(
                 painter = painterResource(id = R.drawable.money_icon),
                 contentDescription = "Деньги",
-                tint = Color.Unspecified, // Чтобы использовать оригинальные цвета иконки
+                tint = Color.Unspecified,
                 modifier = Modifier.size(24.dp)
             )
             Text(
                 text = "$money ₽",
                 fontSize = 18.sp,
-                color = Color.Black
+                color = textColor
             )
         }
     }
 }
 
 @Composable
-fun BottomNavigationBar(onShopClick: () -> Unit, onInventoryClick: () -> Unit) {
+fun BottomNavigationBar(onShopClick: () -> Unit, onInventoryClick: () -> Unit, bottomBarColor: Color, buttonBackgroundColor: Color, textColor: Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f))
+            .background(bottomBarColor)
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
@@ -222,18 +248,17 @@ fun BottomNavigationBar(onShopClick: () -> Unit, onInventoryClick: () -> Unit) {
         Button(
             onClick = onShopClick,
             shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB2EBF2))
+            colors = ButtonDefaults.buttonColors(containerColor = buttonBackgroundColor)
         ) {
-            Text("Магазин", fontSize = 18.sp, color = Color.Black)
+            Text("Магазин", fontSize = 18.sp, color = textColor)
         }
 
         Button(
             onClick = onInventoryClick,
             shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFF9C4))
+            colors = ButtonDefaults.buttonColors(containerColor = buttonBackgroundColor)
         ) {
-            Text("Инвентарь", fontSize = 18.sp, color = Color.Black)
+            Text("Инвентарь", fontSize = 18.sp, color = textColor)
         }
     }
 }
-

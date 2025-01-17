@@ -1,33 +1,38 @@
 package com.petsimulator.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.petsimulator.Constants.pinkColor
 import com.petsimulator.R
 import com.petsimulator.model.Cat
-import com.petsimulator.model.Color as PetColor
 import com.petsimulator.model.Dog
 import com.petsimulator.model.Hamster
 import com.petsimulator.model.Pet
 import com.petsimulator.model.Sex
-import com.petsimulator.utils.playSound
-import com.petsimulator.ui.GifAnimation
+import com.petsimulator.ui.theme.getAppTheme
+import com.petsimulator.utils.GifAnimation
 import com.petsimulator.utils.GradientText
+import com.petsimulator.utils.isNight
+import com.petsimulator.utils.playSound
 import kotlin.reflect.KClass
+import com.petsimulator.model.Color as PetColor
 
 @Composable
 fun ChoosePet(
@@ -40,8 +45,10 @@ fun ChoosePet(
 
     val context = LocalContext.current
 
+    val theme = getAppTheme(isNight = isNight())
+
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(theme.backgroundColor),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -63,7 +70,7 @@ fun ChoosePet(
                 state = pagerState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp) //Увеличить высоту, чтобы разместить текст и гифку
+                    .height(300.dp)
             ) { page ->
                 Column(
                     modifier = Modifier
@@ -74,7 +81,8 @@ fun ChoosePet(
                     Text(
                         text = "Ваш выбор: ${petOptions[page].first}",
                         style = MaterialTheme.typography.displaySmall,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        modifier = Modifier.padding(bottom = 16.dp),
+                        color = theme.textColor
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -106,7 +114,7 @@ fun ChoosePet(
             )
 
             Spacer(modifier = Modifier.height(25.dp))
-            Text(text = "Выберите пол питомца:", style = MaterialTheme.typography.titleLarge)
+            Text(text = "Выберите пол питомца:", style = MaterialTheme.typography.titleLarge, color = theme.textColor)
             Spacer(modifier = Modifier.height(16.dp))
 
             sexOptions.forEach { (petSex, petColor) ->
@@ -131,22 +139,22 @@ fun ChoosePet(
                             unselectedColor = Color.LightGray
                         )
                     )
-                    Text(text = petSex.toString())
+                    Text(text = petSex.toString(), color = theme.textColor)
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Выберите цвет питомца:", style = MaterialTheme.typography.titleLarge)
+            Text(text = "Выберите цвет питомца:", style = MaterialTheme.typography.titleLarge, color = theme.textColor)
             Spacer(modifier = Modifier.height(16.dp))
 
             val colorOptions = listOf(
                 PetColor.RED to Color.Red,
                 PetColor.BLACK to Color.Black,
                 PetColor.WHITE to Color.White,
-                PetColor.MULTI to Color.Unspecified
+                PetColor.MULTI to Color.Magenta
             )
 
-            colorOptions.forEach { (petColor, textColor) ->
+            colorOptions.forEach { (petColor, radioButtonTextColor) ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -164,26 +172,33 @@ fun ChoosePet(
                             selectedPetColor = petColor
                         },
                         colors = RadioButtonDefaults.colors(
-                            selectedColor = textColor,
+                            selectedColor = radioButtonTextColor,
                             unselectedColor = Color.LightGray
                         )
                     )
-                    if (textColor == Color.Unspecified && selectedPetColor == PetColor.MULTI)
+                    if (radioButtonTextColor == Color.Unspecified && selectedPetColor == PetColor.MULTI)
                         GradientText(text = petColor.maleName)
                     else
-                        Text(text = petColor.maleName)
+                        Text(text = petColor.maleName, color = theme.textColor)
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
             TextField(
                 value = selectedPetName,
                 onValueChange = { selectedPetName = it },
                 label = { Text("Имя питомца") },
                 placeholder = { Text("Просто имя вашего любимца...") },
-                singleLine = true
+                singleLine = true,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = theme.textInputColor,
+                    unfocusedContainerColor = theme.textInputColor,
+                    disabledContainerColor = theme.textInputColor
+                ),
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
+                colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
                 onClick = {
                     if (
                         selectedPetType != null &&
@@ -200,7 +215,7 @@ fun ChoosePet(
                         }
                 }
             ) {
-                Text("Сохранить")
+                Text(text = "Сохранить", color = theme.textColor)
             }
         }
     }

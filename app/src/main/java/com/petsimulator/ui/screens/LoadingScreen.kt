@@ -1,5 +1,6 @@
 package com.petsimulator.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,12 +15,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.petsimulator.R
-import com.petsimulator.ui.GifAnimation
+import com.petsimulator.ui.theme.getAppTheme
+import com.petsimulator.utils.GifAnimation
+import com.petsimulator.utils.isNight
 
 @Composable
 fun LoadingScreen() {
+    val theme = getAppTheme(isNight = isNight())
+
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(theme.backgroundColor),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -32,7 +37,8 @@ fun LoadingScreen() {
                 fontSize = 32.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(16.dp),
-                lineHeight = 50.sp
+                lineHeight = 50.sp,
+                color = theme.textColor
             )
         }
     }

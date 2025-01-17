@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.petsimulator.Constants
 import com.petsimulator.model.Owner
+import com.petsimulator.model.Sex
 import com.petsimulator.ui.screens.AskUserName
 import com.petsimulator.ui.screens.ChoosePet
 import com.petsimulator.ui.screens.LoadingScreen
@@ -57,7 +58,8 @@ fun AppContent(appViewModel: AppViewModel) {
         }
         2 -> WelcomeScreenWithAnimation(
             userName = appViewModel.owner.value?.ownerName ?: "Гость",
-            petName = appViewModel.pet.value?.name ?: "Неизвестный"
+            petName = appViewModel.pet.value?.name ?: "Неизвестный",
+            sex = appViewModel.pet.value?.sex ?: Sex.MALE
         ) {
             currentStep = 3
         }

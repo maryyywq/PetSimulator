@@ -6,6 +6,7 @@ import com.petsimulator.model.Dog
 import com.petsimulator.model.Food
 import com.petsimulator.model.Hamster
 import com.petsimulator.model.Medicine
+import com.petsimulator.model.Pet
 import com.petsimulator.model.PetItem
 
 fun ItemEntity.toItem(): PetItem {
@@ -13,6 +14,7 @@ fun ItemEntity.toItem(): PetItem {
         "Cat" -> Cat::class
         "Dog" -> Dog::class
         "Hamster" -> Hamster::class
+        "Pet" -> Pet::class
         else -> throw IllegalArgumentException("Неизвестный питомец: $pettype\"")
     }
 

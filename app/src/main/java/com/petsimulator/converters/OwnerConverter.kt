@@ -8,7 +8,7 @@ import com.petsimulator.model.PetItem
 fun OwnerEntity.toOwner(pet: Pet, items: List<PetItem>): Owner {
     val owner = Owner(name, money, pet)
     items.forEach {
-        owner.addItem(it)
+        owner.addItemToInventory(it)
     }
     return owner
 }

@@ -1,7 +1,5 @@
 package com.petsimulator.model;
 
-import androidx.annotation.NonNull;
-
 import java.util.Random;
 
 public enum Color {

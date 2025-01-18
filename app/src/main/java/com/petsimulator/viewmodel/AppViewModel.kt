@@ -193,6 +193,8 @@ class AppViewModel(
             try {
                 buyItem(item)
                 addItem(item)
+                _message.value = "Успешная покупка!"
+                saveOwner()
             } catch (e: IllegalArgumentException) {
                 _message.value = e.message
             }

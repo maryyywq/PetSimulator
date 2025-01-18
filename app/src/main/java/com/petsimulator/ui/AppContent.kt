@@ -71,7 +71,7 @@ fun AppContent(appViewModel: AppViewModel) {
             currentScreen = choice
         }
         ChoiceSelection.Shop -> ShopScreen(
-            onBuyClick =  { item -> appViewModel.buyItem(item) },
+            viewModel = appViewModel,
             shopItems = StandartShop.getGoods(),
             onBackClick = {
                 currentScreen = ChoiceSelection.Main

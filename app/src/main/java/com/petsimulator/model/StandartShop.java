@@ -16,6 +16,8 @@ public class StandartShop implements Shop {
         items.add(new Food("Вискас", 25, 60, Cat.class));
         items.add(new Food("Зёрнышки", 20, 25, Hamster.class));
         items.add(new Food("Травка", 5, 10, Pet.class));
+        items.add(new Food("Педигри", 40, 70, Dog.class));
+        items.add(new Food("Арбуз", 100, 300, Pet.class));
         return items;
     }
 }

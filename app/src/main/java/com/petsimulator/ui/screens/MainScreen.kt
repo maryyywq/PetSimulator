@@ -105,10 +105,10 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
             )
 
             Image(
-                painter = painterResource(id = R.drawable.black_cat_laying),
+                painter = painterResource(id = R.drawable.black_cat),
                 contentDescription = "Питомец",
                 modifier = Modifier
-                    .size(200.dp)
+                    .size(400.dp)
                     .clickable { showMenu = true }
             )
 

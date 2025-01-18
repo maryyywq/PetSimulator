@@ -23,13 +23,12 @@ import androidx.compose.ui.unit.dp
 import com.petsimulator.R
 import com.petsimulator.ui.theme.getAppTheme
 import com.petsimulator.utils.GifAnimation
-import com.petsimulator.utils.isNight
 
 @Composable
 fun AskUserName(onNameEntered: (String) -> Unit) {
     var userName by remember { mutableStateOf("") }
 
-    val theme = getAppTheme(isNight = isNight())
+    val theme = getAppTheme()
 
     Box(
         modifier = Modifier.fillMaxSize().background(theme.backgroundColor),

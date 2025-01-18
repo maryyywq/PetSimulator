@@ -26,7 +26,6 @@ import com.petsimulator.R
 import com.petsimulator.model.Sex
 import com.petsimulator.ui.theme.getAppTheme
 import com.petsimulator.utils.GifAnimation
-import com.petsimulator.utils.isNight
 import kotlinx.coroutines.delay
 
 @Composable
@@ -39,7 +38,7 @@ fun WelcomeScreenWithAnimation(
     var isFirstTextVisible by remember { mutableStateOf(false) }
     var isSecondTextVisible by remember { mutableStateOf(false) }
 
-    val theme = getAppTheme(isNight = isNight())
+    val theme = getAppTheme()
 
     // Анимация текста
     LaunchedEffect(Unit) {

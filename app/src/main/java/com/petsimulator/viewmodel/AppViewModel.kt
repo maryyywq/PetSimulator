@@ -18,7 +18,6 @@ import com.petsimulator.model.Game
 import com.petsimulator.model.GameDay
 import com.petsimulator.model.Owner
 import com.petsimulator.model.Pet
-import com.petsimulator.model.PetHouse
 import com.petsimulator.model.PetItem
 import com.petsimulator.model.Sex
 import kotlinx.coroutines.Dispatchers
@@ -189,6 +188,17 @@ class AppViewModel(
         }
     }
 
+    fun buyItem(item: PetItem) {
+        _owner.value?.apply {
+            try {
+                buyItem(item)
+                addItem(item)
+            } catch (e: IllegalArgumentException) {
+                _message.value = e.message
+            }
+        }
+    }
+
     private fun addItemDB(item: PetItem) {
         viewModelScope.launch(Dispatchers.IO) {
             itemDao.insertItem(item.toEntity())
@@ -234,9 +244,9 @@ class AppViewModel(
         }
     }
 
-    fun sleep(petHouse: PetHouse) {
+    fun sleep() {
         _pet.value?.apply {
-            val result = sleep(petHouse)
+            val result = sleep()
             savePet()
             _message.value = result
         }

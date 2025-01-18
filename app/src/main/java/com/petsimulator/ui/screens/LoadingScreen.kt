@@ -17,11 +17,10 @@ import androidx.compose.ui.unit.sp
 import com.petsimulator.R
 import com.petsimulator.ui.theme.getAppTheme
 import com.petsimulator.utils.GifAnimation
-import com.petsimulator.utils.isNight
 
 @Composable
 fun LoadingScreen() {
-    val theme = getAppTheme(isNight = isNight())
+    val theme = getAppTheme()
 
     Box(
         modifier = Modifier.fillMaxSize().background(theme.backgroundColor),

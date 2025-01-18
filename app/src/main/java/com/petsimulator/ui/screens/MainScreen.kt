@@ -63,7 +63,7 @@ fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigate
         }
     }
 
-    val theme = getAppTheme(isNightTime)
+    val theme = getAppTheme()
 
     Column(
         modifier = Modifier

@@ -13,6 +13,7 @@ import com.petsimulator.model.StandartShop
 import com.petsimulator.ui.screens.AskUserName
 import com.petsimulator.ui.screens.ChoiceSelection
 import com.petsimulator.ui.screens.ChoosePet
+import com.petsimulator.ui.screens.InventoryScreen
 import com.petsimulator.ui.screens.LoadingScreen
 import com.petsimulator.ui.screens.MainScreen
 import com.petsimulator.ui.screens.ShopScreen
@@ -77,6 +78,11 @@ fun AppContent(appViewModel: AppViewModel) {
                 currentScreen = ChoiceSelection.Main
             }
         )
-        ChoiceSelection.Inventory -> TODO()
+        ChoiceSelection.Inventory -> InventoryScreen(
+            viewModel = appViewModel,
+            onBackClick = {
+                currentScreen = ChoiceSelection.Main
+            }
+        )
     }
 }

@@ -158,7 +158,7 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int, topBarColo
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Здоровье
+        //Здоровье
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -170,13 +170,30 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int, topBarColo
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(8.dp),
-                color = Color(0xFF90CAF9),
+                color = Color(0xFFFF8686),
                 trackColor = Color(0xFFE3F2FD),
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Энергия
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Сытость", fontSize = 16.sp, color = textColor)
+            LinearProgressIndicator(
+                progress = { health / 100f },
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(8.dp),
+                color = Color(0xFF97F990),
+                trackColor = Color(0xFFE3F2FD),
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        //Энергия
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -188,7 +205,7 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int, topBarColo
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(8.dp),
-                color = Color(0xFF81C784),
+                color = Color(0xFFFF8500),
                 trackColor = Color(0xFFC8E6C9),
             )
         }

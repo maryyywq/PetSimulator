@@ -46,7 +46,7 @@ import com.petsimulator.viewmodel.AppViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigateToInventory: () -> Unit) {
+fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> Unit) {
     val owner = viewModel.owner.value
     val pet = viewModel.pet.value
 
@@ -140,8 +140,8 @@ fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigate
 
         // Нижняя панель
         BottomNavigationBar(
-            onShopClick = onNavigateToShop,
-            onInventoryClick = onNavigateToInventory,
+            onShopClick = onContentSelected,
+            onInventoryClick = onContentSelected,
             bottomBarColor = theme.bottomBarColor,
             buttonBackgroundColor = theme.buttonBackgroundColor,
             textColor = theme.textColor
@@ -236,7 +236,7 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int, topBarColo
 }
 
 @Composable
-fun BottomNavigationBar(onShopClick: () -> Unit, onInventoryClick: () -> Unit, bottomBarColor: Color, buttonBackgroundColor: Color, textColor: Color) {
+fun BottomNavigationBar(onShopClick: (ChoiceSelection) -> Unit, onInventoryClick: (ChoiceSelection) -> Unit, bottomBarColor: Color, buttonBackgroundColor: Color, textColor: Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -246,7 +246,7 @@ fun BottomNavigationBar(onShopClick: () -> Unit, onInventoryClick: () -> Unit, b
         verticalAlignment = Alignment.CenterVertically
     ) {
         Button(
-            onClick = onShopClick,
+            onClick = { onShopClick(ChoiceSelection.Shop) },
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(containerColor = buttonBackgroundColor)
         ) {
@@ -254,7 +254,7 @@ fun BottomNavigationBar(onShopClick: () -> Unit, onInventoryClick: () -> Unit, b
         }
 
         Button(
-            onClick = onInventoryClick,
+            onClick = { onInventoryClick(ChoiceSelection.Inventory) },
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(containerColor = buttonBackgroundColor)
         ) {

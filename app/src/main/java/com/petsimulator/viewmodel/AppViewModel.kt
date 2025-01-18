@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.petsimulator.converters.toEntity
+import com.petsimulator.converters.toItem
 import com.petsimulator.converters.toItems
 import com.petsimulator.converters.toOwner
 import com.petsimulator.converters.toPet
@@ -164,25 +165,25 @@ class AppViewModel(
         }
     }
 
-    fun addItem(item: PetItem) {
+    fun deleteItem(item: PetItem) {
         _items.value?.apply {
             try {
-                items.value?.add(item)
-                addItemDB(item)
-            }
-            catch (e: Exception) {
+                remove(item)
+                _items.postValue(this.toMutableList())
+                deleteItemDB(item)
+            } catch (e: Exception) {
                 _message.value = e.message
             }
         }
     }
 
-    fun deleteItem(item: PetItem) {
+    fun addItem(item: PetItem) {
         _items.value?.apply {
             try {
-                items.value?.remove(item)
-                deleteItemDB(item)
-            }
-            catch (e: Exception) {
+                add(item)
+                _items.postValue(this.toMutableList())
+                addItemDB(item)
+            } catch (e: Exception) {
                 _message.value = e.message
             }
         }
@@ -194,7 +195,6 @@ class AppViewModel(
                 buyItem(item)
                 addItem(item)
                 _message.value = "Успешная покупка!"
-                saveOwner()
             } catch (e: IllegalArgumentException) {
                 _message.value = e.message
             }
@@ -209,7 +209,15 @@ class AppViewModel(
 
     private fun deleteItemDB(item: PetItem) {
         viewModelScope.launch(Dispatchers.IO) {
-            itemDao.deleteItem(item.toEntity())
+            val itemsFromDB = itemDao.getItems()
+            var id : Int = 0
+            itemsFromDB.forEach { itemEntity ->
+                if (itemEntity != null) {
+                    if (itemEntity.toItem().name == item.name) id = itemEntity.id
+                }
+            }
+
+            itemDao.deleteItem(item.toEntity(id))
         }
     }
 
@@ -218,8 +226,8 @@ class AppViewModel(
             try {
                 if (items.value?.contains(item) == true) {
                     val res = use(item)
-                    savePet()
                     deleteItem(item)
+                    savePet()
 
                     _message.value = res
                 }

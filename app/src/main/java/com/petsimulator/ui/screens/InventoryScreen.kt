@@ -21,6 +21,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,7 +34,6 @@ import com.petsimulator.model.PetItem
 import com.petsimulator.ui.theme.getAppTheme
 import com.petsimulator.viewmodel.AppViewModel
 
-@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun InventoryScreen(
     viewModel: AppViewModel,
@@ -43,7 +43,7 @@ fun InventoryScreen(
     val openDialog = remember { mutableStateOf(false) }
     val dialogMessage = remember { mutableStateOf("") }
 
-    val inventoryItems by remember { mutableStateOf(viewModel.items.value) }
+    val inventoryItems by viewModel.items.observeAsState(emptyList())
 
     Box(
         modifier = Modifier
@@ -57,10 +57,10 @@ fun InventoryScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             LazyColumn(
-                modifier = Modifier.weight(1f) // Занимает оставшееся пространство
+                modifier = Modifier.weight(1f) //Занимает оставшееся пространство
             ) {
-                // Группируем предметы по парам (2 в строке)
-                items(inventoryItems!!.chunked(2)) { rowItems ->
+                //Группируем предметы по парам (2 в строке)
+                items(inventoryItems.chunked(2)) { rowItems ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -112,7 +112,7 @@ fun InventoryScreen(
                                             openDialog.value = true
                                         },
                                         colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.weight(2f)
                                     ) {
                                         Text("Использовать", color = theme.textColor)
                                     }
@@ -124,7 +124,7 @@ fun InventoryScreen(
                                             openDialog.value = true
                                         },
                                         colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.weight(2f)
                                     ) {
                                         Text("Выбросить", color = theme.textColor)
                                     }
@@ -163,7 +163,10 @@ fun InventoryScreen(
                     )
                 },
                 confirmButton = {
-                    Button(onClick = { openDialog.value = false }) {
+                    Button(onClick = {
+                        openDialog.value = false
+                        onBackClick()
+                    }) {
                         Text("OK", fontSize = 25.sp)
                     }
                 },

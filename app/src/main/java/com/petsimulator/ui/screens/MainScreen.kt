@@ -77,6 +77,7 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
         HealthStatusBar(
             health = pet?.health ?: 0,
             energy = pet?.energy ?: 0,
+            satiety = pet?.satiety ?: 0,
             mood = pet?.mood ?: Mood.HAPPY,
             money = owner?.money ?: 0,
             topBarColor = theme.topBarColor,
@@ -150,7 +151,7 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
 }
 
 @Composable
-fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int, topBarColor: Color, textColor: Color) {
+fun HealthStatusBar(health: Int, energy: Int, satiety: Int, mood: Mood, money: Int, topBarColor: Color, textColor: Color) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -183,7 +184,7 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int, topBarColo
         ) {
             Text("Сытость", fontSize = 16.sp, color = textColor)
             LinearProgressIndicator(
-                progress = { health / 100f },
+                progress = { satiety / 100f },
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(8.dp),

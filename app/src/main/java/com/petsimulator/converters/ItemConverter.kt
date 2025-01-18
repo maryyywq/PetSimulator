@@ -37,8 +37,9 @@ fun List<ItemEntity?>.toItems() : List<PetItem> {
     return items.toList()
 }
 
-fun PetItem.toEntity(): ItemEntity {
+fun PetItem.toEntity(id: Int = 0): ItemEntity {
     return ItemEntity(
+        id = id,
         name = name,
         type = this::class.simpleName ?: "Неизвестный",
         pettype = petUser.simpleName ?: "Неизвестный",

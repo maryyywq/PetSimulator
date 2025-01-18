@@ -1,7 +1,6 @@
 package com.petsimulator.viewmodel
 
 import android.app.Application
-import android.net.ipsec.ike.exceptions.InvalidMajorVersionException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,14 +18,12 @@ import com.petsimulator.model.Game
 import com.petsimulator.model.GameDay
 import com.petsimulator.model.Owner
 import com.petsimulator.model.Pet
-import com.petsimulator.model.PetHouse
 import com.petsimulator.model.PetItem
 import com.petsimulator.model.Sex
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class OwnerViewModel(
+class AppViewModel(
     application: Application
 ) : ViewModel() {
 
@@ -54,7 +51,7 @@ class OwnerViewModel(
         loadOwnerData()
     }
 
-    fun loadOwnerData() {
+    private fun loadOwnerData() {
         viewModelScope.launch(Dispatchers.IO) {
             val owner = ownerDao.getOwner()
             val pet = petDao.getPet()
@@ -191,6 +188,17 @@ class OwnerViewModel(
         }
     }
 
+    fun buyItem(item: PetItem) {
+        _owner.value?.apply {
+            try {
+                buyItem(item)
+                addItem(item)
+            } catch (e: IllegalArgumentException) {
+                _message.value = e.message
+            }
+        }
+    }
+
     private fun addItemDB(item: PetItem) {
         viewModelScope.launch(Dispatchers.IO) {
             itemDao.insertItem(item.toEntity())
@@ -220,7 +228,7 @@ class OwnerViewModel(
         }
     }
 
-    fun playWithPet(game: Game) {
+    fun playWithPet(game: Game?) {
         _pet.value?.apply {
             val res = play(game)
             savePet()
@@ -236,9 +244,9 @@ class OwnerViewModel(
         }
     }
 
-    fun sleep(petHouse: PetHouse) {
+    fun sleep() {
         _pet.value?.apply {
-            val result = sleep(petHouse)
+            val result = sleep()
             savePet()
             _message.value = result
         }

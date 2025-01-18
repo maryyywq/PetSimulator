@@ -166,14 +166,11 @@ public abstract class Pet implements Cloneable {
         return res;
     }
 
-    public String sleep(PetHouse house) {
+    public String sleep() {
         String res;
 
-        status.setEnergy(status.getEnergy() + house.getComfortLevel());
+        status.setEnergy(Status.maxEnergy);
         status.setSatiety(status.getSatiety() - sleepHungerCost);
-        if (status.getEnergy() > Status.maxEnergy) {
-            status.setEnergy(Status.maxEnergy);
-        }
 
         String sexVerbEnding = getSex() == Sex.MALE ? "" : "а";
 

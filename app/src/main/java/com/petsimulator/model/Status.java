@@ -1,5 +1,7 @@
 package com.petsimulator.model;
 
+import androidx.annotation.NonNull;
+
 public class Status implements Cloneable {
     private int satiety;
     private int energy;
@@ -14,7 +16,7 @@ public class Status implements Cloneable {
 
     public Status() {
         setSatiety(maxSatiety);
-        setEnergy(maxEnergy / 2);
+        setEnergy(maxEnergy);
         setHealth(maxHealth);
         setMood(Mood.HAPPY);
     }
@@ -61,6 +63,7 @@ public class Status implements Cloneable {
         this.mood = mood;
     }
 
+    @NonNull
     @Override
     public Status clone() throws CloneNotSupportedException
     {

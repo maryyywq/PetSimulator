@@ -9,13 +9,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.petsimulator.service.HungerWorker
 import com.petsimulator.service.SleepWorker
 import com.petsimulator.ui.AppContent
 import com.petsimulator.ui.theme.PetSimulatorTheme
-import com.petsimulator.utils.AppState
 import com.petsimulator.utils.NotificationUtil
 import com.petsimulator.viewmodel.AppViewModel
 import com.petsimulator.viewmodel.AppViewModelFactory
@@ -29,8 +30,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         NotificationUtil.createNotificationChannel(this)
-
-        AppState.isAppActive = true //Устанавливаем флаг, что приложение активно
 
         scheduleDailySleepTask()
         scheduleHungerUpdateTask()
@@ -49,11 +48,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        AppState.isAppActive = false //Сбрасываем флаг при завершении
     }
 
     private fun scheduleDailySleepTask() {
@@ -77,12 +71,13 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun scheduleHungerUpdateTask() {
-        val workRequest = PeriodicWorkRequestBuilder<HungerWorker>(5, TimeUnit.MINUTES)
+        val workRequest = OneTimeWorkRequestBuilder<HungerWorker>()
+            .setInitialDelay(5, TimeUnit.MINUTES)
             .build()
 
-        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+        WorkManager.getInstance(applicationContext).enqueueUniqueWork(
             "HungerUpdateWorker",
-            ExistingPeriodicWorkPolicy.UPDATE,
+            ExistingWorkPolicy.REPLACE,
             workRequest
         )
     }

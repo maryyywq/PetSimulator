@@ -1,6 +1,5 @@
 package com.petsimulator.ui.screens
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,17 +19,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.petsimulator.R
-import com.petsimulator.model.PetItem
 import com.petsimulator.ui.theme.getAppTheme
 import com.petsimulator.viewmodel.AppViewModel
 
@@ -43,7 +40,7 @@ fun InventoryScreen(
     val openDialog = remember { mutableStateOf(false) }
     val dialogMessage = remember { mutableStateOf("") }
 
-    val inventoryItems by viewModel.items.observeAsState(emptyList())
+    val inventoryItems = viewModel.items.value
 
     Box(
         modifier = Modifier
@@ -60,18 +57,18 @@ fun InventoryScreen(
                 modifier = Modifier.weight(1f) //Занимает оставшееся пространство
             ) {
                 //Группируем предметы по парам (2 в строке)
-                items(inventoryItems.chunked(2)) { rowItems ->
+                items(inventoryItems!!.chunked(2)) { rowItems ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween // Равномерное распределение
+                        horizontalArrangement = Arrangement.SpaceBetween //Равномерное распределение
                     ) {
                         // Обрабатываем каждый элемент в строке
                         rowItems.forEach { item ->
                             Column(
                                 modifier = Modifier
-                                    .weight(1f) // Равный размер для всех элементов
+                                    .weight(1f) //Равный размер для всех элементов
                                     .padding(horizontal = 8.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -112,9 +109,9 @@ fun InventoryScreen(
                                             openDialog.value = true
                                         },
                                         colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
-                                        modifier = Modifier.weight(2f)
+                                        modifier = Modifier.weight(1f)
                                     ) {
-                                        Text("Использовать", color = theme.textColor)
+                                        Text("\uD83D\uDC45", color = theme.textColor)
                                     }
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Button(
@@ -124,9 +121,9 @@ fun InventoryScreen(
                                             openDialog.value = true
                                         },
                                         colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
-                                        modifier = Modifier.weight(2f)
+                                        modifier = Modifier.weight(1f)
                                     ) {
-                                        Text("Выбросить", color = theme.textColor)
+                                        Text("\uD83D\uDDD1\uFE0F", color = theme.textColor)
                                     }
                                 }
                             }
@@ -154,20 +151,27 @@ fun InventoryScreen(
 
         if (openDialog.value) {
             AlertDialog(
-                onDismissRequest = { openDialog.value = false },
+                onDismissRequest = {
+                    openDialog.value = false
+                    onBackClick()
+                                   },
                 text = {
                     Text(
                         text = dialogMessage.value,
-                        fontSize = 25.sp,
-                        color = theme.textColor
+                        fontSize = 20.sp,
+                        color = theme.textColor,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 30.sp
                     )
                 },
                 confirmButton = {
-                    Button(onClick = {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
+                        onClick = {
                         openDialog.value = false
                         onBackClick()
                     }) {
-                        Text("OK", fontSize = 25.sp)
+                        Text("OK", fontSize = 20.sp, color = theme.textColor)
                     }
                 },
                 containerColor = theme.backgroundColor,

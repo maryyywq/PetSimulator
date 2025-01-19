@@ -6,7 +6,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.petsimulator.Constants
 import com.petsimulator.model.Owner
 import com.petsimulator.model.Sex
 import com.petsimulator.model.StandartShop
@@ -50,7 +49,6 @@ fun AppContent(appViewModel: AppViewModel) {
         ChoiceSelection.AskUserName -> AskUserName { enteredName ->
             appViewModel.setOwner(Owner())
             appViewModel.setOwnerName(enteredName)
-            appViewModel.addMoney(Constants.startMoneyBonus)
             currentScreen = ChoiceSelection.ChoosePet
         }
         ChoiceSelection.ChoosePet -> ChoosePet { petName, petType, petColor, petSex  ->

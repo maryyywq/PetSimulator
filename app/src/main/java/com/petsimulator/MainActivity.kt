@@ -6,17 +6,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.petsimulator.service.HungerWorker
 import com.petsimulator.service.SleepWorker
 import com.petsimulator.ui.AppContent
 import com.petsimulator.ui.theme.PetSimulatorTheme
+import com.petsimulator.utils.AppState
+import com.petsimulator.utils.NotificationUtil
 import com.petsimulator.viewmodel.AppViewModel
+import com.petsimulator.viewmodel.AppViewModelFactory
 import java.time.Duration
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
@@ -26,7 +28,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        NotificationUtil.createNotificationChannel(this)
+
+        AppState.isAppActive = true //Устанавливаем флаг, что приложение активно
+
         scheduleDailySleepTask()
+        scheduleHungerUpdateTask()
 
         setContent {
             PetSimulatorTheme {
@@ -36,12 +43,17 @@ class MainActivity : ComponentActivity() {
                     val viewModel: AppViewModel = viewModel(
                         it,
                         "OwnerViewModel",
-                        OwnerViewModelFactory(LocalContext.current.applicationContext as Application)
+                        AppViewModelFactory(LocalContext.current.applicationContext as Application)
                     )
                     AppContent(viewModel)
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        AppState.isAppActive = false //Сбрасываем флаг при завершении
     }
 
     private fun scheduleDailySleepTask() {
@@ -63,11 +75,15 @@ class MainActivity : ComponentActivity() {
             workRequest
         )
     }
-}
 
-class OwnerViewModelFactory(private val application: Application) :
-    ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AppViewModel(application) as T
+    private fun scheduleHungerUpdateTask() {
+        val workRequest = PeriodicWorkRequestBuilder<HungerWorker>(5, TimeUnit.MINUTES)
+            .build()
+
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+            "HungerUpdateWorker",
+            ExistingPeriodicWorkPolicy.UPDATE,
+            workRequest
+        )
     }
 }

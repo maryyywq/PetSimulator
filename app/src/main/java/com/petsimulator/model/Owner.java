@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Owner {
     private String ownerName = "Некто";
-    private int money;
+    private int money = 1000;
     private Pet pet = null;
     private List<PetItem> itemInventory = new ArrayList<>();
 

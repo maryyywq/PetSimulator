@@ -17,8 +17,10 @@ import com.petsimulator.ui.screens.InventoryScreen
 import com.petsimulator.ui.screens.LoadingScreen
 import com.petsimulator.ui.screens.MainScreen
 import com.petsimulator.ui.screens.ShopScreen
-import com.petsimulator.ui.screens.WelcomeScreenWithAnimation
+import com.petsimulator.ui.screens.SleepingScreen
+import com.petsimulator.ui.screens.WelcomeScreen
 import com.petsimulator.utils.createPet
+import com.petsimulator.utils.isPetSleeping
 import com.petsimulator.utils.stopSound
 import com.petsimulator.viewmodel.AppViewModel
 
@@ -59,12 +61,15 @@ fun AppContent(appViewModel: AppViewModel) {
             stopSound()
             currentScreen = ChoiceSelection.Welcome
         }
-        ChoiceSelection.Welcome -> WelcomeScreenWithAnimation(
+        ChoiceSelection.Welcome -> WelcomeScreen(
             userName = appViewModel.owner.value?.ownerName ?: "Гость",
             petName = appViewModel.pet.value?.name ?: "Неизвестный",
             sex = appViewModel.pet.value?.sex ?: Sex.MALE
         ) {
-            currentScreen = ChoiceSelection.Main
+            currentScreen = if (isPetSleeping())
+                ChoiceSelection.Sleeping
+            else
+                ChoiceSelection.Main
         }
         ChoiceSelection.Main -> MainScreen(
             viewModel = appViewModel
@@ -84,5 +89,11 @@ fun AppContent(appViewModel: AppViewModel) {
                 currentScreen = ChoiceSelection.Main
             }
         )
+        ChoiceSelection.Sleeping -> SleepingScreen(
+            petName = appViewModel.pet.value?.name ?: "Неизвестный",
+            sex = appViewModel.pet.value?.sex ?: Sex.MALE
+        ) {
+            currentScreen = ChoiceSelection.Welcome
+        }
     }
 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,9 +42,7 @@ import com.petsimulator.R
 import com.petsimulator.model.Mood
 import com.petsimulator.ui.theme.getAppTheme
 import com.petsimulator.utils.imageChooser
-import com.petsimulator.utils.isNight
 import com.petsimulator.viewmodel.AppViewModel
-import kotlinx.coroutines.delay
 
 @Composable
 fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> Unit) {
@@ -52,17 +50,6 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
     val pet = viewModel.pet.value
 
     var showMenu by remember { mutableStateOf(false) }
-
-    //Определяем состояние времени дня
-    var isNightTime by remember { mutableStateOf(isNight()) }
-
-    //Обновляем время дня каждые 60 секунд
-    LaunchedEffect(Unit) {
-        while (true) {
-            isNightTime = isNight()
-            delay(60000L)
-        }
-    }
 
     val theme = getAppTheme()
 
@@ -96,7 +83,7 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(if(isNightTime) R.drawable.night_background else R.drawable.day_background) // Замените на ваш ресурс
+                    .data(if(isSystemInDarkTheme()) R.drawable.night_background else R.drawable.day_background) // Замените на ваш ресурс
                     .decoderFactory { result, options, _ ->
                         ImageDecoderDecoder(result.source, options)
                     }

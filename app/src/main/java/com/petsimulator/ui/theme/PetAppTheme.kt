@@ -1,7 +1,8 @@
 package com.petsimulator.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.petsimulator.utils.isNight
 
 data class PetAppTheme(
     val backgroundColor : Color,
@@ -12,8 +13,9 @@ data class PetAppTheme(
     val textInputColor : Color
 )
 
+@Composable
 fun getAppTheme() : PetAppTheme {
-    if (isNight()) {
+    if (isSystemInDarkTheme()) {
         return PetAppTheme(
             backgroundColor =  Color(0xFF7677C0),
             topBarColor = Color(0xFF3949AB),

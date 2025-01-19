@@ -1,14 +1,16 @@
 package com.petsimulator.utils
 
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.TextUnit
 
 @Composable
-fun GradientText(text: String) {
+fun GradientText(text: String, fontSize: TextUnit = TextUnit.Unspecified, modifier: Modifier = Modifier) {
     //Список цветов радуги
     val colors = listOf(
         Color.Red,
@@ -37,8 +39,10 @@ fun GradientText(text: String) {
         endX = 1000f * animatedOffset.value //Анимируем градиент
     )
 
-    BasicText(
+    Text(
         text = text,
-        style = TextStyle(brush = gradientBrush)
+        style = TextStyle(brush = gradientBrush),
+        fontSize = fontSize,
+        modifier = modifier
     )
 }

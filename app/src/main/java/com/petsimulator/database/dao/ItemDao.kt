@@ -9,7 +9,7 @@ import com.petsimulator.database.entities.ItemEntity
 
 @Dao
 interface ItemDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     suspend fun insertItem(item: ItemEntity)
 
     @Query("SELECT * FROM items")

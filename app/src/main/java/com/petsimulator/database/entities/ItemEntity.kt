@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
     tableName = "items",
 )
 data class ItemEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 1,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
     val type: String,
     val pettype: String,

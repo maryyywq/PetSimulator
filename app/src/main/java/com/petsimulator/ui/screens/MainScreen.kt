@@ -41,12 +41,13 @@ import coil.request.ImageRequest
 import com.petsimulator.R
 import com.petsimulator.model.Mood
 import com.petsimulator.ui.theme.getAppTheme
+import com.petsimulator.utils.imageChooser
 import com.petsimulator.utils.isNight
 import com.petsimulator.viewmodel.AppViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigateToInventory: () -> Unit) {
+fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> Unit) {
     val owner = viewModel.owner.value
     val pet = viewModel.pet.value
 
@@ -77,6 +78,7 @@ fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigate
         HealthStatusBar(
             health = pet?.health ?: 0,
             energy = pet?.energy ?: 0,
+            satiety = pet?.satiety ?: 0,
             mood = pet?.mood ?: Mood.HAPPY,
             money = owner?.money ?: 0,
             topBarColor = theme.topBarColor,
@@ -105,10 +107,10 @@ fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigate
             )
 
             Image(
-                painter = painterResource(id = R.drawable.black_cat_laying),
+                painter = painterResource(id = imageChooser(pet!!)),
                 contentDescription = "Питомец",
                 modifier = Modifier
-                    .size(200.dp)
+                    .size(400.dp)
                     .clickable { showMenu = true }
             )
 
@@ -140,8 +142,8 @@ fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigate
 
         // Нижняя панель
         BottomNavigationBar(
-            onShopClick = onNavigateToShop,
-            onInventoryClick = onNavigateToInventory,
+            onShopClick = onContentSelected,
+            onInventoryClick = onContentSelected,
             bottomBarColor = theme.bottomBarColor,
             buttonBackgroundColor = theme.buttonBackgroundColor,
             textColor = theme.textColor
@@ -150,7 +152,7 @@ fun MainScreen(viewModel: AppViewModel, onNavigateToShop: () -> Unit, onNavigate
 }
 
 @Composable
-fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int, topBarColor: Color, textColor: Color) {
+fun HealthStatusBar(health: Int, energy: Int, satiety: Int, mood: Mood, money: Int, topBarColor: Color, textColor: Color) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -158,7 +160,7 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int, topBarColo
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Здоровье
+        //Здоровье
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -170,13 +172,30 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int, topBarColo
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(8.dp),
-                color = Color(0xFF90CAF9),
+                color = Color(0xFFFF8686),
                 trackColor = Color(0xFFE3F2FD),
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Энергия
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Сытость", fontSize = 16.sp, color = textColor)
+            LinearProgressIndicator(
+                progress = { satiety / 100f },
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(8.dp),
+                color = Color(0xFF97F990),
+                trackColor = Color(0xFFE3F2FD),
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        //Энергия
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -188,7 +207,7 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int, topBarColo
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(8.dp),
-                color = Color(0xFF81C784),
+                color = Color(0xFFFF8500),
                 trackColor = Color(0xFFC8E6C9),
             )
         }
@@ -236,7 +255,7 @@ fun HealthStatusBar(health: Int, energy: Int, mood: Mood, money: Int, topBarColo
 }
 
 @Composable
-fun BottomNavigationBar(onShopClick: () -> Unit, onInventoryClick: () -> Unit, bottomBarColor: Color, buttonBackgroundColor: Color, textColor: Color) {
+fun BottomNavigationBar(onShopClick: (ChoiceSelection) -> Unit, onInventoryClick: (ChoiceSelection) -> Unit, bottomBarColor: Color, buttonBackgroundColor: Color, textColor: Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -246,7 +265,7 @@ fun BottomNavigationBar(onShopClick: () -> Unit, onInventoryClick: () -> Unit, b
         verticalAlignment = Alignment.CenterVertically
     ) {
         Button(
-            onClick = onShopClick,
+            onClick = { onShopClick(ChoiceSelection.Shop) },
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(containerColor = buttonBackgroundColor)
         ) {
@@ -254,7 +273,7 @@ fun BottomNavigationBar(onShopClick: () -> Unit, onInventoryClick: () -> Unit, b
         }
 
         Button(
-            onClick = onInventoryClick,
+            onClick = { onInventoryClick(ChoiceSelection.Inventory) },
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(containerColor = buttonBackgroundColor)
         ) {

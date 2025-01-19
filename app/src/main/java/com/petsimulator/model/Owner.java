@@ -53,11 +53,11 @@ public class Owner {
         this.pet = pet;
     }
 
-    private void addItem(PetItem item) {
+    public void addItemToInventory(PetItem item) {
         itemInventory.add(item);
     }
 
-    public void removeItem(String name) {
+    public void removeItemFromInventory(String name) {
         PetItem itemToRemove = itemInventory.stream()
                 .filter(item -> item.getName().equals(name))
                 .findFirst()
@@ -80,7 +80,7 @@ public class Owner {
     public void buyItem(@NonNull PetItem item) {
         if (item.getCost() <= money) {
             money -= item.getCost();
-            addItem(item);
+            addItemToInventory(item);
         } else {
             throw new IllegalArgumentException("Недостаточно денег!");
         }

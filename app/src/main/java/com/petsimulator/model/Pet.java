@@ -155,7 +155,7 @@ public abstract class Pet implements Cloneable {
             status.setHealth(status.getHealth() - healthCost);
             if (status.getHealth() < 0) status.setHealth(0);
             String sexVerbEnding = sex == Sex.MALE ? "ся" : "ась";
-            res = (name + " испугал" + sexVerbEnding + " из-за плохой погоды.");
+            res = (name + " испугал" + sexVerbEnding + " плохой погоды. Вам придётся подождать, пока " + name + " придёт в себя!");
         } else {
             status.setMood(Mood.HAPPY);
             res = (name + " гуляет и наслаждается хорошей погодой.");
@@ -211,9 +211,11 @@ public abstract class Pet implements Cloneable {
             setEnergy(getEnergy() - game.getEnergyCost());
             setSatiety(getSatiety() - Pet.satietyCost);
 
-            return (getName() + " поиграл" + sexVerbEnding + " в " + game.getGameName() + " и очень счастлив" + sexVerbEnding + "!");
+            String gameName = game.getGameName().isEmpty() ? "" : " в " + game.getGameName() + " ";
+
+            return (getName() + " играет " + gameName + "и очень счастлив" + sexVerbEnding + "!");
         } else {
-            return (getName() + " слишком устал" + sexVerbEnding + " для игры.");
+            return (getName() + " слишком устал" + sexVerbEnding + " для игры. Он" + sexVerbEnding + " отдыхает!");
         }
     }
 

@@ -41,8 +41,12 @@ import coil.request.ImageRequest
 import com.petsimulator.R
 import com.petsimulator.model.Mood
 import com.petsimulator.ui.theme.getAppTheme
+import com.petsimulator.utils.chooseSound
 import com.petsimulator.utils.imageChooser
+import com.petsimulator.utils.playSound
 import com.petsimulator.viewmodel.AppViewModel
+import androidx.compose.material3.AlertDialog
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> Unit) {
@@ -50,8 +54,11 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
     val pet = viewModel.pet.value
 
     var showMenu by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     val theme = getAppTheme()
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -83,14 +90,14 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(if(isSystemInDarkTheme()) R.drawable.night_background else R.drawable.day_background) // Замените на ваш ресурс
+                    .data(if (isSystemInDarkTheme()) R.drawable.night_background else R.drawable.day_background)
                     .decoderFactory { result, options, _ ->
                         ImageDecoderDecoder(result.source, options)
                     }
                     .build(),
                 contentDescription = "Фон",
-                contentScale = ContentScale.Crop, //Указывает, что изображение должно растягиваться и обрезаться для заполнения области
-                modifier = Modifier.fillMaxSize() //Растягивает фон на весь экран
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
 
             Image(
@@ -111,23 +118,49 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
                         Button(
                             colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
                             onClick = {
-                                showMenu = false
+                                try {
+                                    showMenu = false
+                                    viewModel.playWithPet()
+
+                                    onContentSelected(ChoiceSelection.Playing)
+                                } catch (e: Exception) {
+                                    errorMessage = e.message
+                                }
                             }) {
                             Text("Поиграть с питомцем", color = theme.textColor)
                         }
                         Button(
                             colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
                             onClick = {
-                                showMenu = false
+                                try {
+                                    showMenu = false
+                                    viewModel.walkWithPet()
+
+                                    onContentSelected(ChoiceSelection.Walking)
+                                } catch (e: Exception) {
+                                    errorMessage = e.message
+                                }
                             }) {
                             Text("Погулять с питомцем", color = theme.textColor)
+                        }
+                        Button(
+                            colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
+                            onClick = {
+                                try {
+                                    showMenu = false
+                                    viewModel.petYourPet()
+                                    playSound(context = context, soundResId = chooseSound(pet)!!)
+                                } catch (e: Exception) {
+                                    errorMessage = e.message
+                                }
+                            }) {
+                            Text("Погладить питомца", color = theme.textColor)
                         }
                     }
                 }
             }
         }
 
-        // Нижняя панель
         BottomNavigationBar(
             onShopClick = onContentSelected,
             onInventoryClick = onContentSelected,
@@ -136,7 +169,29 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
             textColor = theme.textColor
         )
     }
+
+    errorMessage?.let { message ->
+        AlertDialog(
+            onDismissRequest = { errorMessage = null },
+            confirmButton = {
+                Button(onClick = { errorMessage = null }, colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor)) {
+                    Text("OK", fontSize = 20.sp, color = theme.textColor)
+                }
+            },
+            text = {
+                Text(
+                text = message,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                color = theme.textColor
+                )
+            },
+            containerColor = theme.backgroundColor,
+            textContentColor = theme.textColor
+        )
+    }
 }
+
 
 @Composable
 fun HealthStatusBar(health: Int, energy: Int, satiety: Int, mood: Mood, money: Int, topBarColor: Color, textColor: Color) {

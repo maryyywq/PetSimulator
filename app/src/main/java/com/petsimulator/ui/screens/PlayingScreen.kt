@@ -1,6 +1,5 @@
 package com.petsimulator.ui.screens
 
-import com.petsimulator.utils.isPetSleeping
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -25,7 +24,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.petsimulator.R
-import com.petsimulator.model.Sex
 import com.petsimulator.ui.theme.getAppTheme
 import com.petsimulator.utils.GifAnimation
 import com.petsimulator.utils.playSound
@@ -33,10 +31,9 @@ import com.petsimulator.utils.stopSound
 import kotlinx.coroutines.delay
 
 @Composable
-fun SleepingScreen(
-    petName: String,
-    sex: Sex,
-    onSleepingEnded: () -> Unit
+fun PlayingScreen(
+    description: String,
+    onPlayingEnded: () -> Unit
 ) {
     var isTextVisible by remember { mutableStateOf(false) }
 
@@ -48,14 +45,10 @@ fun SleepingScreen(
     LaunchedEffect(Unit) {
         delay(1000)  //Небольшая задержка перед появлением первого текста
         isTextVisible = true
-        playSound(context = context, soundResId = R.raw.sleeping_sound)
-        while (true) {
-            if (!isPetSleeping()) {
-                stopSound()
-                onSleepingEnded()
-            }
-            delay(60000)
-        }
+        playSound(context = context, soundResId = R.raw.keyboard_piano, playOnce = false)
+        delay(60000)
+        stopSound()
+        onPlayingEnded()
     }
 
     Box(
@@ -64,7 +57,6 @@ fun SleepingScreen(
             .background(theme.backgroundColor),
         contentAlignment = Alignment.Center
     ) {
-        //Первый текст
         AnimatedVisibility(
             visible = isTextVisible,
             enter = fadeIn(animationSpec = tween(1000)),
@@ -75,12 +67,10 @@ fun SleepingScreen(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                GifAnimation(R.drawable.potato_sleeping, size = 350.dp)
-
-                val sexVerbEnding = if (sex == Sex.MALE) "" else "а"
+                GifAnimation(R.drawable.playing, size = 350.dp)
 
                 Text(
-                    text = "Ваш$sexVerbEnding $petName спит!",
+                    text = description ,
                     fontSize = 32.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(16.dp),

@@ -24,28 +24,31 @@ fun imageChooser(item: PetItem) : Int {
 }
 
 fun imageChooser(pet: Pet) : Int {
-    return when {
-        pet is Cat -> when(pet.color) {
+    return when (pet) {
+        is Cat -> when(pet.color) {
             Color.BLACK -> R.drawable.black_cat
             Color.RED -> R.drawable.red_cat
             Color.WHITE -> R.drawable.white_cat
             Color.MULTI -> R.drawable.unspecified_cat
             else -> R.drawable.question_mark
         }
-        pet is Dog -> when(pet.color) {
+
+        is Dog -> when(pet.color) {
             Color.BLACK -> R.drawable.black_dog
             Color.RED -> R.drawable.red_dog
             Color.WHITE -> R.drawable.white_dog
             Color.MULTI -> R.drawable.unspecified_dog
             else -> R.drawable.question_mark
         }
-        pet is Hamster -> when(pet.color) {
+
+        is Hamster -> when(pet.color) {
             Color.BLACK -> R.drawable.black_hamster
             Color.RED -> R.drawable.red_hamster
             Color.WHITE -> R.drawable.white_hamster
             Color.MULTI -> R.drawable.unspecified_hamster
             else -> R.drawable.question_mark
         }
+
         else -> R.drawable.question_mark
     }
 }

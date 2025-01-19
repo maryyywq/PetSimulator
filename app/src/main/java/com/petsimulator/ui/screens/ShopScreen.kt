@@ -160,7 +160,7 @@ fun ShopScreen(
                     }
                 },
                 containerColor = theme.backgroundColor,
-                textContentColor = theme.textColor,
+                textContentColor = theme.textColor
             )
         }
     }

@@ -158,7 +158,7 @@ fun InventoryScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
                         onClick = {
                         openDialog.value = false
-                        onBackClick()
+                        //onBackClick()
                     }) {
                         Text("OK", fontSize = 20.sp, color = theme.textColor)
                     }

@@ -43,6 +43,7 @@ import com.petsimulator.ui.theme.getAppTheme
 import com.petsimulator.utils.GifAnimation
 import com.petsimulator.utils.GradientText
 import com.petsimulator.utils.playSound
+import com.petsimulator.utils.stopSound
 import kotlin.reflect.KClass
 import com.petsimulator.model.Color as PetColor
 
@@ -75,7 +76,7 @@ fun ChoosePet(
             val currentPage by remember { derivedStateOf { pagerState.currentPage } }
 
             LaunchedEffect(currentPage) {
-                playSound(context, petOptions[currentPage].third)
+                playSound(context = context, soundResId = petOptions[currentPage].third, playOnce = false)
             }
 
             HorizontalPager(
@@ -218,6 +219,7 @@ fun ChoosePet(
                         selectedPetSex != null &&
                         selectedPetColor != null
                         ) {
+                            stopSound()
                             onPetSelected(
                                 selectedPetName,
                                 selectedPetType as KClass<Pet>,

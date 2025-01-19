@@ -210,7 +210,7 @@ class AppViewModel(
     private fun deleteItemDB(item: PetItem) {
         viewModelScope.launch(Dispatchers.IO) {
             val itemsFromDB = itemDao.getItems()
-            var id : Int = 0
+            var id = 0
             itemsFromDB.forEach { itemEntity ->
                 if (itemEntity != null) {
                     if (itemEntity.toItem().name == item.name) id = itemEntity.id
@@ -238,7 +238,7 @@ class AppViewModel(
         }
     }
 
-    fun playWithPet(game: Game?) {
+    fun playWithPet(game: Game? = Game()) {
         _pet.value?.apply {
             val res = play(game)
             savePet()
@@ -246,7 +246,7 @@ class AppViewModel(
         }
     }
 
-    fun walkWithPet(gameDay: GameDay) {
+    fun walkWithPet(gameDay: GameDay? = GameDay()) {
         _pet.value?.apply {
             val result = walk(gameDay)
             savePet()
@@ -264,7 +264,8 @@ class AppViewModel(
 
     fun petYourPet() {
         _pet.value?.apply {
-            val result = pet()
+            val result = sound
+            pet()
             savePet()
             _message.value = result
         }

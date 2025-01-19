@@ -6,6 +6,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.petsimulator.model.Mood
 import com.petsimulator.model.Owner
 import com.petsimulator.model.Sex
 import com.petsimulator.model.StandartShop
@@ -15,12 +16,13 @@ import com.petsimulator.ui.screens.ChoosePet
 import com.petsimulator.ui.screens.InventoryScreen
 import com.petsimulator.ui.screens.LoadingScreen
 import com.petsimulator.ui.screens.MainScreen
+import com.petsimulator.ui.screens.PlayingScreen
 import com.petsimulator.ui.screens.ShopScreen
 import com.petsimulator.ui.screens.SleepingScreen
+import com.petsimulator.ui.screens.WalkingScreen
 import com.petsimulator.ui.screens.WelcomeScreen
 import com.petsimulator.utils.createPet
 import com.petsimulator.utils.isPetSleeping
-import com.petsimulator.utils.stopSound
 import com.petsimulator.viewmodel.AppViewModel
 
 @Composable
@@ -46,19 +48,21 @@ fun AppContent(appViewModel: AppViewModel) {
 
     when (currentScreen) {
         ChoiceSelection.Loading -> LoadingScreen()
+
         ChoiceSelection.AskUserName -> AskUserName { enteredName ->
             appViewModel.setOwner(Owner())
             appViewModel.setOwnerName(enteredName)
             currentScreen = ChoiceSelection.ChoosePet
         }
+
         ChoiceSelection.ChoosePet -> ChoosePet { petName, petType, petColor, petSex  ->
             appViewModel.setPet(createPet(petType))
             appViewModel.setPetName(petName)
             appViewModel.setPetColor(petColor)
             appViewModel.setPetSex(petSex)
-            stopSound()
             currentScreen = ChoiceSelection.Welcome
         }
+
         ChoiceSelection.Welcome -> WelcomeScreen(
             userName = appViewModel.owner.value?.ownerName ?: "Гость",
             petName = appViewModel.pet.value?.name ?: "Неизвестный",
@@ -69,11 +73,13 @@ fun AppContent(appViewModel: AppViewModel) {
             else
                 ChoiceSelection.Main
         }
+
         ChoiceSelection.Main -> MainScreen(
             viewModel = appViewModel
         ) { choice ->
             currentScreen = choice
         }
+
         ChoiceSelection.Shop -> ShopScreen(
             viewModel = appViewModel,
             shopItems = StandartShop.getGoods(),
@@ -81,17 +87,32 @@ fun AppContent(appViewModel: AppViewModel) {
                 currentScreen = ChoiceSelection.Main
             }
         )
+
         ChoiceSelection.Inventory -> InventoryScreen(
             viewModel = appViewModel,
             onBackClick = {
                 currentScreen = ChoiceSelection.Main
             }
         )
+
         ChoiceSelection.Sleeping -> SleepingScreen(
             petName = appViewModel.pet.value?.name ?: "Неизвестный",
             sex = appViewModel.pet.value?.sex ?: Sex.MALE
         ) {
             currentScreen = ChoiceSelection.Welcome
+        }
+
+        ChoiceSelection.Playing -> PlayingScreen(
+            description = appViewModel.message.value!!
+        ) {
+            currentScreen = ChoiceSelection.Main
+        }
+
+        ChoiceSelection.Walking -> WalkingScreen(
+            description = appViewModel.message.value!!,
+            mood = appViewModel.pet.value?.mood ?: Mood.HAPPY
+        ) {
+            currentScreen = ChoiceSelection.Main
         }
     }
 }

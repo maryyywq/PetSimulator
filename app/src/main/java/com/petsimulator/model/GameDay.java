@@ -2,7 +2,7 @@ package com.petsimulator.model;
 
 public class GameDay {
     private int dayNumber;
-    private Weather weather = Weather.SUNNY;
+    private Weather weather = Weather.getRandomWeather();
 
 
     public GameDay() { }

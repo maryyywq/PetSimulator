@@ -48,7 +48,7 @@ fun SleepingScreen(
     LaunchedEffect(Unit) {
         delay(1000)  //Небольшая задержка перед появлением первого текста
         isTextVisible = true
-        playSound(context = context, soundResId = R.raw.sleeping_sound)
+        playSound(context = context, soundResId = R.raw.sleeping_sound, playOnce = false)
         while (true) {
             if (!isPetSleeping()) {
                 stopSound()

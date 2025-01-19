@@ -225,7 +225,7 @@ fun HealthStatusBar(health: Int, energy: Int, satiety: Int, mood: Mood, money: I
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Сытость", fontSize = 16.sp, color = textColor)
+            Text("Сытость ", fontSize = 16.sp, color = textColor)
             LinearProgressIndicator(
                 progress = { satiety / 100f },
                 modifier = Modifier
@@ -243,7 +243,7 @@ fun HealthStatusBar(health: Int, energy: Int, satiety: Int, mood: Mood, money: I
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Энергия", fontSize = 16.sp, color = textColor)
+            Text("Энергия ", fontSize = 16.sp, color = textColor)
             LinearProgressIndicator(
                 progress = { energy / 100f },
                 modifier = Modifier

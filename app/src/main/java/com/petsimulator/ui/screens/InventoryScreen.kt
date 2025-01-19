@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.petsimulator.ui.theme.getAppTheme
+import com.petsimulator.utils.emojiPetChoose
 import com.petsimulator.utils.imageChooser
 import com.petsimulator.viewmodel.AppViewModel
 
@@ -84,6 +85,18 @@ fun InventoryScreen(
                                     fontSize = 18.sp,
                                     color = theme.textColor,
                                     modifier = Modifier.padding(top = 8.dp)
+                                )
+                                Text(
+                                    text = "Ценность: ${item.value}",
+                                    fontSize = 16.sp,
+                                    color = theme.textColor,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                                Text(
+                                    text = "Для: ${emojiPetChoose(item.petUser)}",
+                                    fontSize = 16.sp,
+                                    color = theme.textColor,
+                                    modifier = Modifier.padding(top = 4.dp)
                                 )
                                 Row(
                                     modifier = Modifier

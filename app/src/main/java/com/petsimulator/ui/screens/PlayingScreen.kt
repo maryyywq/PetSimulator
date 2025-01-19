@@ -19,39 +19,36 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.petsimulator.R
-import com.petsimulator.model.Sex
 import com.petsimulator.ui.theme.getAppTheme
 import com.petsimulator.utils.GifAnimation
+import com.petsimulator.utils.playSound
+import com.petsimulator.utils.stopSound
 import kotlinx.coroutines.delay
 
 @Composable
-fun WelcomeScreen(
-    userName: String,
-    petName: String,
-    sex: Sex,
-    onAnimationEnded: () -> Unit
+fun PlayingScreen(
+    description: String,
+    onPlayingEnded: () -> Unit
 ) {
-    var isFirstTextVisible by remember { mutableStateOf(false) }
-    var isSecondTextVisible by remember { mutableStateOf(false) }
+    var isTextVisible by remember { mutableStateOf(false) }
 
     val theme = getAppTheme()
 
-    // Анимация текста
+    val context = LocalContext.current
+
+    //Анимация текста
     LaunchedEffect(Unit) {
-        delay(500)  //Небольшая задержка перед появлением первого текста
-        isFirstTextVisible = true
-        delay(4000)  //Пауза перед исчезновением первого текста
-        isFirstTextVisible = false
-        delay(1500)  //Небольшая пауза перед появлением второго текста
-        isSecondTextVisible = true
-        delay(4000)  //Пауза перед завершением анимации
-        isSecondTextVisible = false
-        delay(1000)  //Пауза перед завершением
-        onAnimationEnded()
+        delay(1000)  //Небольшая задержка перед появлением первого текста
+        isTextVisible = true
+        playSound(context = context, soundResId = R.raw.keyboard_piano, playOnce = false)
+        delay(60000)
+        stopSound()
+        onPlayingEnded()
     }
 
     Box(
@@ -60,25 +57,8 @@ fun WelcomeScreen(
             .background(theme.backgroundColor),
         contentAlignment = Alignment.Center
     ) {
-        //Первый текст
         AnimatedVisibility(
-            visible = isFirstTextVisible,
-            enter = fadeIn(animationSpec = tween(1000)),
-            exit = fadeOut(animationSpec = tween(1000))
-        ) {
-            Text(
-                text = "Добро пожаловать, $userName!",
-                fontSize = 32.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp),
-                lineHeight = 50.sp,
-                color = theme.textColor
-            )
-        }
-
-        //Второй текст
-        AnimatedVisibility(
-            visible = isSecondTextVisible,
+            visible = isTextVisible,
             enter = fadeIn(animationSpec = tween(1000)),
             exit = fadeOut(animationSpec = tween(1000))
         ) {
@@ -87,12 +67,10 @@ fun WelcomeScreen(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                GifAnimation(R.drawable.welcome_cats, size = 300.dp)
-
-                val sexVerbEnding = if (sex == Sex.MALE) "" else "а"
+                GifAnimation(R.drawable.playing, size = 350.dp)
 
                 Text(
-                    text = "Ваш$sexVerbEnding $petName ждет вас!",
+                    text = description ,
                     fontSize = 32.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(16.dp),

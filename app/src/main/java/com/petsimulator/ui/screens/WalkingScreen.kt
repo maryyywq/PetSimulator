@@ -7,8 +7,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,39 +21,38 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.petsimulator.R
-import com.petsimulator.model.Sex
+import com.petsimulator.model.Mood
 import com.petsimulator.ui.theme.getAppTheme
 import com.petsimulator.utils.GifAnimation
+import com.petsimulator.utils.playSound
+import com.petsimulator.utils.stopSound
 import kotlinx.coroutines.delay
 
 @Composable
-fun WelcomeScreen(
-    userName: String,
-    petName: String,
-    sex: Sex,
-    onAnimationEnded: () -> Unit
+fun WalkingScreen(
+    description: String,
+    mood: Mood,
+    onWalkingEnded: () -> Unit
 ) {
-    var isFirstTextVisible by remember { mutableStateOf(false) }
-    var isSecondTextVisible by remember { mutableStateOf(false) }
+    var isTextVisible by remember { mutableStateOf(false) }
 
     val theme = getAppTheme()
 
-    // Анимация текста
+    val context = LocalContext.current
+
+    //Анимация текста
     LaunchedEffect(Unit) {
-        delay(500)  //Небольшая задержка перед появлением первого текста
-        isFirstTextVisible = true
-        delay(4000)  //Пауза перед исчезновением первого текста
-        isFirstTextVisible = false
-        delay(1500)  //Небольшая пауза перед появлением второго текста
-        isSecondTextVisible = true
-        delay(4000)  //Пауза перед завершением анимации
-        isSecondTextVisible = false
-        delay(1000)  //Пауза перед завершением
-        onAnimationEnded()
+        delay(1000)
+        isTextVisible = true
+        playSound(context = context, soundResId = if (mood == Mood.HAPPY) R.raw.happy_walking else R.raw.sad_walking, playOnce = false)
+        delay(60000)
+        stopSound()
+        onWalkingEnded()
     }
 
     Box(
@@ -60,25 +61,8 @@ fun WelcomeScreen(
             .background(theme.backgroundColor),
         contentAlignment = Alignment.Center
     ) {
-        //Первый текст
         AnimatedVisibility(
-            visible = isFirstTextVisible,
-            enter = fadeIn(animationSpec = tween(1000)),
-            exit = fadeOut(animationSpec = tween(1000))
-        ) {
-            Text(
-                text = "Добро пожаловать, $userName!",
-                fontSize = 32.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp),
-                lineHeight = 50.sp,
-                color = theme.textColor
-            )
-        }
-
-        //Второй текст
-        AnimatedVisibility(
-            visible = isSecondTextVisible,
+            visible = isTextVisible,
             enter = fadeIn(animationSpec = tween(1000)),
             exit = fadeOut(animationSpec = tween(1000))
         ) {
@@ -87,12 +71,12 @@ fun WelcomeScreen(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                GifAnimation(R.drawable.welcome_cats, size = 300.dp)
+                GifAnimation(if(mood == Mood.HAPPY) R.drawable.walking_sun else R.drawable.walking_rain, size = 350.dp)
 
-                val sexVerbEnding = if (sex == Sex.MALE) "" else "а"
+                Spacer(modifier = Modifier.height(25.dp))
 
                 Text(
-                    text = "Ваш$sexVerbEnding $petName ждет вас!",
+                    text = description,
                     fontSize = 32.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(16.dp),

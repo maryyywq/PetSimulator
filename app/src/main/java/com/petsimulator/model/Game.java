@@ -3,8 +3,8 @@ package com.petsimulator.model;
 public class Game {
     private String gameName = "";
     private String description = "Ничего не делали!";
-    private int funValue;
-    private int energyCost;
+    private int funValue = 10;
+    private int energyCost = 5;
 
 
     public Game() { }

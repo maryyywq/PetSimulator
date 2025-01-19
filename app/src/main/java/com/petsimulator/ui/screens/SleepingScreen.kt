@@ -1,5 +1,6 @@
 package com.petsimulator.ui.screens
 
+import com.petsimulator.utils.isPetSleeping
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,32 +28,34 @@ import com.petsimulator.R
 import com.petsimulator.model.Sex
 import com.petsimulator.ui.theme.getAppTheme
 import com.petsimulator.utils.GifAnimation
+import com.petsimulator.utils.playSound
+import com.petsimulator.utils.stopSound
 import kotlinx.coroutines.delay
 
 @Composable
-fun WelcomeScreen(
-    userName: String,
+fun SleepingScreen(
     petName: String,
     sex: Sex,
-    onAnimationEnded: () -> Unit
+    onSleepingEnded: () -> Unit
 ) {
-    var isFirstTextVisible by remember { mutableStateOf(false) }
-    var isSecondTextVisible by remember { mutableStateOf(false) }
+    var isTextVisible by remember { mutableStateOf(false) }
 
     val theme = getAppTheme()
 
-    // Анимация текста
+    val context = LocalContext.current
+
+    //Анимация текста
     LaunchedEffect(Unit) {
-        delay(500)  //Небольшая задержка перед появлением первого текста
-        isFirstTextVisible = true
-        delay(4000)  //Пауза перед исчезновением первого текста
-        isFirstTextVisible = false
-        delay(1500)  //Небольшая пауза перед появлением второго текста
-        isSecondTextVisible = true
-        delay(4000)  //Пауза перед завершением анимации
-        isSecondTextVisible = false
-        delay(1000)  //Пауза перед завершением
-        onAnimationEnded()
+        delay(1000)  //Небольшая задержка перед появлением первого текста
+        isTextVisible = true
+        playSound(context = context, soundResId = R.raw.sleeping_sound)
+        while (true) {
+            if (!isPetSleeping()) {
+                stopSound()
+                onSleepingEnded()
+            }
+            delay(60000)
+        }
     }
 
     Box(
@@ -62,23 +66,7 @@ fun WelcomeScreen(
     ) {
         //Первый текст
         AnimatedVisibility(
-            visible = isFirstTextVisible,
-            enter = fadeIn(animationSpec = tween(1000)),
-            exit = fadeOut(animationSpec = tween(1000))
-        ) {
-            Text(
-                text = "Добро пожаловать, $userName!",
-                fontSize = 32.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp),
-                lineHeight = 50.sp,
-                color = theme.textColor
-            )
-        }
-
-        //Второй текст
-        AnimatedVisibility(
-            visible = isSecondTextVisible,
+            visible = isTextVisible,
             enter = fadeIn(animationSpec = tween(1000)),
             exit = fadeOut(animationSpec = tween(1000))
         ) {
@@ -87,12 +75,12 @@ fun WelcomeScreen(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                GifAnimation(R.drawable.welcome_cats, size = 300.dp)
+                GifAnimation(R.drawable.potato_sleeping, size = 350.dp)
 
                 val sexVerbEnding = if (sex == Sex.MALE) "" else "а"
 
                 Text(
-                    text = "Ваш$sexVerbEnding $petName ждет вас!",
+                    text = "Ваш$sexVerbEnding $petName спит!",
                     fontSize = 32.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(16.dp),

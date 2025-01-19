@@ -6,9 +6,11 @@ import java.util.*;
 
 public class Owner {
     private String ownerName = "Некто";
-    private int money;
+    private int money = 3000;
     private Pet pet = null;
     private List<PetItem> itemInventory = new ArrayList<>();
+
+    public static final int everyDayMoneyBonus = 1000;
 
     public Owner() { }
 

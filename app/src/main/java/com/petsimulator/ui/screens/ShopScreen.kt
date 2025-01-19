@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.petsimulator.model.PetItem
 import com.petsimulator.ui.theme.getAppTheme
 import com.petsimulator.utils.GradientText
+import com.petsimulator.utils.emojiPetChoose
 import com.petsimulator.utils.imageChooser
 import com.petsimulator.viewmodel.AppViewModel
 
@@ -108,6 +109,12 @@ fun ShopScreen(
                                     color = theme.textColor,
                                     modifier = Modifier.padding(top = 4.dp)
                                 )
+                                Text(
+                                    text = "Для: ${emojiPetChoose(item.petUser)}",
+                                    fontSize = 16.sp,
+                                    color = theme.textColor,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
                                 Button(
                                     onClick = {
                                         viewModel.buyItem(item)
@@ -160,7 +167,7 @@ fun ShopScreen(
                     }
                 },
                 containerColor = theme.backgroundColor,
-                textContentColor = theme.textColor,
+                textContentColor = theme.textColor
             )
         }
     }

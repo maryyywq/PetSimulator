@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,10 +41,12 @@ import coil.request.ImageRequest
 import com.petsimulator.R
 import com.petsimulator.model.Mood
 import com.petsimulator.ui.theme.getAppTheme
+import com.petsimulator.utils.chooseSound
 import com.petsimulator.utils.imageChooser
-import com.petsimulator.utils.isNight
+import com.petsimulator.utils.playSound
 import com.petsimulator.viewmodel.AppViewModel
-import kotlinx.coroutines.delay
+import androidx.compose.material3.AlertDialog
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> Unit) {
@@ -52,19 +54,11 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
     val pet = viewModel.pet.value
 
     var showMenu by remember { mutableStateOf(false) }
-
-    //Определяем состояние времени дня
-    var isNightTime by remember { mutableStateOf(isNight()) }
-
-    //Обновляем время дня каждые 60 секунд
-    LaunchedEffect(Unit) {
-        while (true) {
-            isNightTime = isNight()
-            delay(60000L)
-        }
-    }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     val theme = getAppTheme()
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -96,14 +90,14 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(if(isNightTime) R.drawable.night_background else R.drawable.day_background) // Замените на ваш ресурс
+                    .data(if (isSystemInDarkTheme()) R.drawable.night_background else R.drawable.day_background)
                     .decoderFactory { result, options, _ ->
                         ImageDecoderDecoder(result.source, options)
                     }
                     .build(),
                 contentDescription = "Фон",
-                contentScale = ContentScale.Crop, //Указывает, что изображение должно растягиваться и обрезаться для заполнения области
-                modifier = Modifier.fillMaxSize() //Растягивает фон на весь экран
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
 
             Image(
@@ -124,23 +118,49 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
                         Button(
                             colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
                             onClick = {
-                                showMenu = false
+                                try {
+                                    showMenu = false
+                                    viewModel.playWithPet()
+
+                                    onContentSelected(ChoiceSelection.Playing)
+                                } catch (e: Exception) {
+                                    errorMessage = e.message
+                                }
                             }) {
                             Text("Поиграть с питомцем", color = theme.textColor)
                         }
                         Button(
                             colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
                             onClick = {
-                                showMenu = false
+                                try {
+                                    showMenu = false
+                                    viewModel.walkWithPet()
+
+                                    onContentSelected(ChoiceSelection.Walking)
+                                } catch (e: Exception) {
+                                    errorMessage = e.message
+                                }
                             }) {
                             Text("Погулять с питомцем", color = theme.textColor)
+                        }
+                        Button(
+                            colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor),
+                            onClick = {
+                                try {
+                                    showMenu = false
+                                    viewModel.petYourPet()
+                                    playSound(context = context, soundResId = chooseSound(pet)!!)
+                                } catch (e: Exception) {
+                                    errorMessage = e.message
+                                }
+                            }) {
+                            Text("Погладить питомца", color = theme.textColor)
                         }
                     }
                 }
             }
         }
 
-        // Нижняя панель
         BottomNavigationBar(
             onShopClick = onContentSelected,
             onInventoryClick = onContentSelected,
@@ -149,7 +169,29 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
             textColor = theme.textColor
         )
     }
+
+    errorMessage?.let { message ->
+        AlertDialog(
+            onDismissRequest = { errorMessage = null },
+            confirmButton = {
+                Button(onClick = { errorMessage = null }, colors = ButtonDefaults.buttonColors(containerColor = theme.buttonBackgroundColor)) {
+                    Text("OK", fontSize = 20.sp, color = theme.textColor)
+                }
+            },
+            text = {
+                Text(
+                text = message,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                color = theme.textColor
+                )
+            },
+            containerColor = theme.backgroundColor,
+            textContentColor = theme.textColor
+        )
+    }
 }
+
 
 @Composable
 fun HealthStatusBar(health: Int, energy: Int, satiety: Int, mood: Mood, money: Int, topBarColor: Color, textColor: Color) {
@@ -183,7 +225,7 @@ fun HealthStatusBar(health: Int, energy: Int, satiety: Int, mood: Mood, money: I
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Сытость", fontSize = 16.sp, color = textColor)
+            Text("Сытость ", fontSize = 16.sp, color = textColor)
             LinearProgressIndicator(
                 progress = { satiety / 100f },
                 modifier = Modifier
@@ -201,7 +243,7 @@ fun HealthStatusBar(health: Int, energy: Int, satiety: Int, mood: Mood, money: I
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Энергия", fontSize = 16.sp, color = textColor)
+            Text("Энергия ", fontSize = 16.sp, color = textColor)
             LinearProgressIndicator(
                 progress = { energy / 100f },
                 modifier = Modifier

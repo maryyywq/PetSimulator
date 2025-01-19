@@ -41,6 +41,7 @@ import coil.request.ImageRequest
 import com.petsimulator.R
 import com.petsimulator.model.Mood
 import com.petsimulator.ui.theme.getAppTheme
+import com.petsimulator.utils.imageChooser
 import com.petsimulator.utils.isNight
 import com.petsimulator.viewmodel.AppViewModel
 import kotlinx.coroutines.delay
@@ -106,7 +107,7 @@ fun MainScreen(viewModel: AppViewModel, onContentSelected: (ChoiceSelection) -> 
             )
 
             Image(
-                painter = painterResource(id = R.drawable.black_cat),
+                painter = painterResource(id = imageChooser(pet!!)),
                 contentDescription = "Питомец",
                 modifier = Modifier
                     .size(400.dp)

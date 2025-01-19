@@ -27,8 +27,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.petsimulator.R
 import com.petsimulator.ui.theme.getAppTheme
+import com.petsimulator.utils.imageChooser
 import com.petsimulator.viewmodel.AppViewModel
 
 @Composable
@@ -74,18 +74,7 @@ fun InventoryScreen(
                             ) {
                                 Image(
                                     painter = painterResource(
-                                        id = when (item.name) {
-                                            "Нурофен" -> R.drawable.nurofen
-                                            "Йодомарин" -> R.drawable.iodomarin
-                                            "Витамин D" -> R.drawable.vit_d
-                                            "Косточка" -> R.drawable.bone
-                                            "Вискас" -> R.drawable.whiskas
-                                            "Зёрнышки" -> R.drawable.seeds
-                                            "Травка" -> R.drawable.grass
-                                            "Педигри" -> R.drawable.pedigree
-                                            "Арбуз" -> R.drawable.watermelon
-                                            else -> R.drawable.question_mark
-                                        }
+                                        id = imageChooser(item)
                                     ),
                                     contentDescription = null,
                                     modifier = Modifier.size(64.dp)

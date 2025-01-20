@@ -10,7 +10,6 @@ public class Cat extends Pet {
         super(name, age, sex, color, satiety, energy, health);
     }
 
-
     public void groom() {
         System.out.println("Ваш кот(кошка) " + name + " умылся(лась).");
         status.setMood(Mood.HAPPY);

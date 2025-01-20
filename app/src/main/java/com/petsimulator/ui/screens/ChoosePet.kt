@@ -116,9 +116,9 @@ fun ChoosePet(
                             }
                         )
                     }
-                }
 
-                selectedPetType = petOptions[page].second
+                    selectedPetType = petOptions[currentPage].second
+                }
             }
 
             val sexOptions = listOf(

@@ -9,7 +9,7 @@ import com.petsimulator.model.Pet
 fun chooseSound(pet: Pet): Int? {
     return when (pet) {
         is Cat -> R.raw.cat_meow_sound
-        is Dog -> R.raw.dog_choose_sound
+        is Dog -> R.raw.dog_bark_sound
         is Hamster -> R.raw.hamster_dance_sound
         else -> null
     }
